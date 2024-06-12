@@ -2,10 +2,12 @@ import customtkinter as ctk
 from varios.vistas.body import Body
 from varios.vistas.sidebar import Sidebar
 from varios.vistas.vista1 import Vista1
+from varios.vistas.vista2 import Vista2
+from varios.controladores.controlador_principal import ControladorPrincipal
 
 
 class VistaPrincipal(ctk.CTk):
-    def __init__(self):
+    def __init__(self, controlador: ControladorPrincipal):
         super().__init__()
         self.geometry("1024x640")
         self.resizable(False, False)
@@ -14,11 +16,13 @@ class VistaPrincipal(ctk.CTk):
         self.create_sidebar()
         self.create_body()
 
-        self.controlador = None
+        self.controlador = controlador
+        self.on_page(Vista1)
 
     def on_page(self, page):
+
         self.delete_pages()
-        new_page = page(self.body)
+        new_page = page(self.body, self.controlador)
 
         new_page.pack(fill="both", expand=True)
 
@@ -31,7 +35,7 @@ class VistaPrincipal(ctk.CTk):
     def create_sidebar(self):
         button_info_list = [
             {"name": "Vista 1", "vista": Vista1},
-            # {"name": "Vista 2", "vista": Vista2},  # Ajusta el nombre y la vista según tus necesidades
+            {"name": "Vista 2", "vista": Vista2},  # Ajusta el nombre y la vista según tus necesidades
             # {"name": "Vista 3", "vista": Vista3}
         ]
 
