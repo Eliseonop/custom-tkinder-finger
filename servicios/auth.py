@@ -1,4 +1,4 @@
-from vars import VARS
+from config import CONFIG
 import requests
 import json
 from utils.storage import Storage
@@ -6,7 +6,7 @@ from utils.storage import Storage
 
 class Auth:
     def __init__(self):
-        self.base_url = VARS.BASE_URL_API
+        self.base_url = CONFIG.BASE_URL_API
         self.storage = Storage()
 
     def sign_in(self, username, password):

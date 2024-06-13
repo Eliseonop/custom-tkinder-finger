@@ -3,7 +3,6 @@ from tkinter import messagebox
 from servicios.auth import Auth
 from PIL import Image
 import os
-from vistas.vista_principal import VistaPrincipal
 
 
 class Autenticar(ctk.CTkFrame):

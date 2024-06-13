@@ -1,4 +1,4 @@
-from vars import VARS
+from config import CONFIG
 
 #
 # class Empleados:
