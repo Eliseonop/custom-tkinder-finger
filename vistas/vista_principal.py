@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from controladores.controlador_principal import ControladorPrincipal
+from controladores.device import Device
 from vistas.subirtemplate import SubirTemplate
 from vistas.marcar import Marcar
 from vistas.dispositivo import Dispositivo

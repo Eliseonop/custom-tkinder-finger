@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from controladores.controlador_principal import ControladorPrincipal
+from controladores.device import Device
 
 
 class Dispositivo(ctk.CTkFrame):

@@ -1,7 +1,7 @@
 # vistas/vista2.py
 
 import customtkinter as ctk
-from controladores.controlador_principal import ControladorPrincipal
+from controladores.device import Device
 from PIL import Image, ImageTk
 from io import BytesIO
 import base64

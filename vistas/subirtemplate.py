@@ -1,7 +1,7 @@
 # vistas/vista1.py
 
 import customtkinter as ctk
-from controladores.controlador_principal import ControladorPrincipal
+from controladores.device import Device
 
 
 class SubirTemplate(ctk.CTkFrame):

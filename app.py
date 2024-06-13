@@ -10,6 +10,7 @@ class App(ctk.CTk):
         self.geometry("1024x640")
         self.resizable(False, False)
         self.title("Tcontur Asistencia")
+        self.iconbitmap("./utils/favicon.ico")
 
         # self.controlador = ControladorPrincipal(self)
         self.auth = Auth()
