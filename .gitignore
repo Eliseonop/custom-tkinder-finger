@@ -1,2 +1,3 @@
 .venv
 vars.py
+.env
