@@ -41,7 +41,7 @@ class VistaPrincipal(ctk.CTkFrame):
     def create_sidebar(self):
         button_info_list = [
             {"name": "Registrar", "vista": SubirTemplate},
-            {"name": "Autenticar", "vista": Marcar},  # Ajusta el nombre y la vista según tus necesidades
+            {"name": "Marcar", "vista": Marcar},  # Ajusta el nombre y la vista según tus necesidades
             {"name": "Dispositivo", "vista": Dispositivo}
         ]
 

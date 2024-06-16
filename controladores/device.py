@@ -112,19 +112,6 @@ class Device:
                 print("Huella dactilar capturada para autenticación")
                 start_time = time.time()
 
-                # for comun
-                # for entry in listemp:
-                #     # print('elemento')
-                #     print(entry['id'])
-                #     temp = b64decode(entry["template"])
-                #
-                #     match = zkfp2.DBMatch(tmp, temp)
-                #     if match > 80:
-                #         print(f"Usuario identificado: ID = {entry['id']} , Score = {match} y empleado {entry['empleado']}")
-                #         zkfp2.show_image(img)
-                #
-                #         break
-                # for con mas performance
                 print("Coloca tu dedo en el escáner para autenticación...")
                 print(self.listemp)
 
@@ -137,11 +124,16 @@ class Device:
                             f"Usuario identificado: ID = {entry["id"]} , Score = {match} y empleado {entry["empleado"]}")
                         # self.zkfp2.show_image(img)
                         self.img = img
-                        break
+
+                    else:
+                        print(f"Usuario no identificado: Score = {match}")
+                        # self.zkfp2.show_image(img)
                     break
                 end_time = time.time()
                 elapsed_time = end_time - start_time
                 print(f"Tiempo transcurrido: {elapsed_time} segundos")
-                # self.img = img
                 break
+            # self.img = img
+            break
+
         return self.zkfp2.Blob2Base64String(self.img)
