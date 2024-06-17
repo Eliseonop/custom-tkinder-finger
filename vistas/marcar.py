@@ -17,8 +17,9 @@ class Marcar(ctk.CTkFrame):
         self.boton.pack(padx=20, pady=20)
 
         self.device = Device()
-
-        # self.progress_bar.set(0)
+        self.image_label = None
+        self.label_instruction = None
+        self.label_result = None
 
         self.load_huellas()
 
@@ -26,10 +27,8 @@ class Marcar(ctk.CTkFrame):
         def load():
             self.progress_bar.configure(mode="indeterminate")
             self.progress_bar.start()
-            # aqui se hace la peticon de las uellas
             carga = self.device.cargar_huellas()
-            # self.progress_bar.configure(mode="")
-            self.progress_bar.pack_forget()  # Ocultar la barra de progreso
+            self.progress_bar.pack_forget()
 
             if carga:
                 self.boton_marcar = ctk.CTkButton(self, text="Marcar Asistencia", command=self.on_auth_huellas)
@@ -43,10 +42,20 @@ class Marcar(ctk.CTkFrame):
 
     def on_auth_huellas(self):
         def auth():
+            if self.image_label:
+                self.image_label.pack_forget()
+            if self.label_instruction:
+                self.label_instruction.pack_forget()
+            if self.label_result:
+                self.label_result.pack_forget()
+
+            self.label_instruction = ctk.CTkLabel(self, text="Ponga su dedo en el lector")
+            self.label_instruction.pack(padx=10, pady=10)
+
             while True:
                 capture = self.device.zkfp2.AcquireFingerprint()
                 if capture:
-                    print('Huella dactilar capturada')
+                    self.label_instruction.pack_forget()
                     tmp, img = capture
                     my_img = self.device.zkfp2.Blob2Base64String(img)
 
@@ -58,30 +67,21 @@ class Marcar(ctk.CTkFrame):
 
                     for temp, entry in zip(decoded_temps, self.device.listemp):
                         match = self.device.zkfp2.DBMatch(tmp, temp)
-                        print(f"Score: {match}")
                         if match > 80:
-                            print(
-                                f"Usuario identificado: ID = {entry['id']} , Score = {match} y empleado {entry['empleado']}")
-                            # dibuajr un label de que se identifico
                             self.filter_image = ImageOps.colorize(open_imagen, "black", "green")
-
-                            label_check = ctk.CTkLabel(self,
-                                                       text=f"Usuario identificado: ID = {entry['id']} , Score = {match} y empleado {entry['empleado']}")
-                            label_check.pack(padx=10, pady=10)
+                            self.label_result = ctk.CTkLabel(self,
+                                                             text=f"Usuario identificado: ID = {entry['id']} , Score = {match} y empleado {entry['empleado']}")
+                            self.label_result.pack(padx=10, pady=10)
                             break
-
                         else:
-                            print(f"Usuario no identificado: Score = {match}")
-                            # self.zkfp2.show_image(img)
                             self.filter_image = ImageOps.colorize(open_imagen, "black", "red")
-
-                            self.label_check = ctk.CTkLabel(self, text=f"Usuario no identificado: Score = {match}")
-                            self.label_check.pack(padx=10, pady=10)
+                            self.label_result = ctk.CTkLabel(self, text=f"Usuario no identificado: Score = {match}")
+                            self.label_result.pack(padx=10, pady=10)
                             break
 
                     imagen_ctk = ctk.CTkImage(dark_image=self.filter_image, size=(200, 250))
-                    image_label = ctk.CTkLabel(self, image=imagen_ctk, text="", width=200, height=200)
-                    image_label.pack(padx=10, pady=10)
+                    self.image_label = ctk.CTkLabel(self, image=imagen_ctk, text="", width=200, height=200)
+                    self.image_label.pack(padx=10, pady=10)
                     break
 
         threading.Thread(target=auth).start()

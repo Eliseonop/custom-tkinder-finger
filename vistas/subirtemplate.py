@@ -1,12 +1,13 @@
 import customtkinter as ctk
 from tkinter import StringVar
-from servicios.empleadosservice import EmpleadosService
+from servicios.empleados_service import EmpleadosService
 from servicios.auth import Auth
 import threading
 from base64 import b64encode, b64decode
 from io import BytesIO
 from PIL import Image
 from pyzkfp import ZKFP2
+from servicios.finger_service import FingerService
 
 
 class SubirTemplate(ctk.CTkFrame):
@@ -18,7 +19,6 @@ class SubirTemplate(ctk.CTkFrame):
         self.zkfp2 = ZKFP2()
         self.zkfp2.Init()
         device_count = self.zkfp2.GetDeviceCount()
-
         if device_count > 0:
             print(f"{device_count} dispositivos encontrados")
             self.device = self.zkfp2.OpenDevice(0)
@@ -28,6 +28,7 @@ class SubirTemplate(ctk.CTkFrame):
 
         auth = Auth()
         self.empleados_service = EmpleadosService(auth)
+        self.finger_service = FingerService(auth)
         self.lista_empleados = []
         self.nombres_empleados = []
         self.selected_template = None
@@ -47,7 +48,6 @@ class SubirTemplate(ctk.CTkFrame):
         # Mostrar el mensaje de "Poner Dedo en Huellero"
         if self.image_label is not None:
             self.image_label.pack_forget()
-
 
         if self.fingerprint_message_label is None:
             self.fingerprint_message_label = ctk.CTkLabel(self, text="Poner Dedo en Huellero")
@@ -176,16 +176,17 @@ class SubirTemplate(ctk.CTkFrame):
             return
 
         empleado_id = self.selected_empleado['id']
-        empleado_nombre = self.selected_empleado['nombre']
+        empleado_name = self.selected_empleado['nombre']
         template = self.selected_template
 
         datos = {
-            "id": empleado_id,
-            "empleado": empleado_nombre,
+            "empleado": empleado_id,
+            "empleado_name": empleado_name,
             "template": template
         }
 
         print("Enviando datos:", datos)
-        # Aquí se realizaría el POST con la biblioteca adecuada, por ejemplo requests
-        # response = requests.post(url, json=datos)
-        # print("Response:", response.json())
+        self.finger_service.push_finger(datos)
+
+    # def upload_fingerprint(self, data):
+    #     self.finger_service.push_finger(data)
