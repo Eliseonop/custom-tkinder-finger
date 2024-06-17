@@ -3,7 +3,7 @@ import requests
 from servicios.auth import Auth
 
 
-class Empleados:
+class EmpleadosService:
     def __init__(self, auth: Auth):
         self.base_url = CONFIG.BASE_URL_API
         self.auth = auth
@@ -19,10 +19,10 @@ class Empleados:
             response = requests.get(url, headers=headers)
             response.raise_for_status()  # Esto lanzará una excepción si la respuesta no es 200 OK
             self.empleados = response.json()
-            return self.empleados
+            return True
         except requests.exceptions.RequestException as e:
             print(f"Error al obtener los empleados: {e}")
-            return None
+            return False
 
 # Ejemplo de uso:
 # auth = Auth()

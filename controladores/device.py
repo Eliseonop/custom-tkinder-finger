@@ -15,7 +15,7 @@ class Device:
         device_count = self.zkfp2.GetDeviceCount()
         self.img = None
         self.device = None
-
+        self.listemp = []
         if device_count > 0:
             print(f"{device_count} dispositivos encontrados")
             self.device = self.zkfp2.OpenDevice(0)
@@ -89,19 +89,23 @@ class Device:
             print(f"Error al registrar la huella: {e}")
 
     def cargar_huellas(self):
+        try:
 
-        response = requests.get(baseUrl)
+            response = requests.get(baseUrl)
 
-        if response.status_code == 200:
-            newlist = response.json()
-            for entry in newlist:
-                self.listemp.append(entry)
-                # self.listemp.append(Huellas(entry["id"], entry["empleado"], entry["template"]))
-            print(self.listemp)
-            return self.listemp
-        else:
-            print(f"Error al cargar las huellas dactilares del servidor: {response.status_code}")
-            return []
+            if response.status_code == 200:
+                newlist = response.json()
+                for entry in newlist:
+                    self.listemp.append(entry)
+                    # self.listemp.append(Huellas(entry["id"], entry["empleado"], entry["template"]))
+                print(self.listemp)
+                return True
+            else:
+                print(f"Error al cargar las huellas dactilares del servidor: {response.status_code}")
+                return False
+        except Exception as e:
+            print(f"Error al cargar las huellas dactilares: {e}")
+            return False
 
     def autenticar_usuario(self) -> str:
 

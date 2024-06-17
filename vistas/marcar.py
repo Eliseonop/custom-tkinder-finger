@@ -5,53 +5,59 @@ from controladores.device import Device
 from PIL import Image, ImageTk
 from io import BytesIO
 from base64 import b64encode, b64decode
+import threading
 
 
 class Marcar(ctk.CTkFrame):
-    def __init__(self, master, ):
+    def __init__(self, master):
         super().__init__(master, fg_color="transparent")
+        self.progress_bar = ctk.CTkProgressBar(self, width=600, height=5)
+        self.progress_bar.pack(side="top", )
         self.boton = ctk.CTkButton(self, text="Vista 2", command=self.destroy)
         self.boton.pack(padx=20, pady=20)
-        # if controlador is not None:
+
         self.device = Device()
 
-        # self.controlador.probar_dispositivo()
-        # self.controlador.cargar_huellas()
-        self.auth_buttons()
-        self.device.cargar_huellas()
 
-    def auth_buttons(self):
-        self.boton = ctk.CTkButton(self, text="Probar Huellero",
-                                   command=self.auth_huellas)
-        self.boton.pack(padx=20, pady=20)
-        # if controlador is not None:
+        # self.progress_bar.set(0)
 
-        # self.controlador.probar_dispositivo()
+        self.load_huellas()
 
-    def auth_huellas(self):
+    def load_huellas(self):
+        def load():
+            self.progress_bar.configure(mode="indeterminate")
+            self.progress_bar.start()
+            # aqui se hace la peticon de las uellas
+            carga = self.device.cargar_huellas()
+            # self.progress_bar.configure(mode="")
+            self.progress_bar.pack_forget()  # Ocultar la barra de progreso
 
-        while True:
-            capture = self.device.zkfp2.AcquireFingerprint()
-            if capture:
-                print('Huella dactilar capturada')
-                tmp, img = capture
-                my_img = self.device.zkfp2.Blob2Base64String(img)
+            if carga:
+                self.boton_marcar = ctk.CTkButton(self, text="Probar Huellero", command=self.on_auth_huellas)
+                self.boton_marcar.pack(padx=20, pady=20)
+            else:
+                print('No se han podido cargar las huellas')
+                self.label = ctk.CTkLabel(self, text="No se han podido cargar las huellas")
+                self.label.pack(padx=20, pady=20)
 
-                datos_de_imagen = b64decode(my_img)
+        threading.Thread(target=load).start()
 
-                # Crear un objeto de bytes
-                imagen_bytes = BytesIO(datos_de_imagen)
+    def on_auth_huellas(self):
+        def auth():
+            while True:
+                capture = self.device.zkfp2.AcquireFingerprint()
+                if capture:
+                    print('Huella dactilar capturada')
+                    tmp, img = capture
+                    my_img = self.device.zkfp2.Blob2Base64String(img)
 
-                # Cargar la imagen desde los bytes usando Pillow
-                imagen = Image.open(imagen_bytes)
+                    datos_de_imagen = b64decode(my_img)
+                    imagen_bytes = BytesIO(datos_de_imagen)
+                    imagen = Image.open(imagen_bytes)
 
-                # imagen_tk = ImageTk.PhotoImage(imagen)
+                    imagen = ctk.CTkImage(dark_image=imagen, size=(230, 230))
+                    image_label = ctk.CTkLabel(self, image=imagen, text="", width=200, height=200)
+                    image_label.pack(padx=10, pady=10)
+                    break
 
-                # img2 = ImageTk.PhotoImage(img)
-                # Crea un widget de etiqueta (label) y coloca la imagen en él
-                imagen = ctk.CTkImage(dark_image=imagen, size=(230, 230))
-                # label_imagen.pack(padx=20, pady=20)
-                image_label = ctk.CTkLabel(self, image=imagen, text="", width=200, height=200)
-                image_label.pack(padx=10, pady=10)
-                break
-
+        threading.Thread(target=auth).start()
