@@ -2,7 +2,7 @@
 
 import customtkinter as ctk
 from controladores.device import Device
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageOps
 from io import BytesIO
 from base64 import b64encode, b64decode
 import threading
@@ -18,7 +18,6 @@ class Marcar(ctk.CTkFrame):
 
         self.device = Device()
 
-
         # self.progress_bar.set(0)
 
         self.load_huellas()
@@ -33,7 +32,7 @@ class Marcar(ctk.CTkFrame):
             self.progress_bar.pack_forget()  # Ocultar la barra de progreso
 
             if carga:
-                self.boton_marcar = ctk.CTkButton(self, text="Probar Huellero", command=self.on_auth_huellas)
+                self.boton_marcar = ctk.CTkButton(self, text="Marcar Asistencia", command=self.on_auth_huellas)
                 self.boton_marcar.pack(padx=20, pady=20)
             else:
                 print('No se han podido cargar las huellas')
@@ -51,12 +50,37 @@ class Marcar(ctk.CTkFrame):
                     tmp, img = capture
                     my_img = self.device.zkfp2.Blob2Base64String(img)
 
+                    decoded_temps = [b64decode(entry["template"]) for entry in self.device.listemp]
+
                     datos_de_imagen = b64decode(my_img)
                     imagen_bytes = BytesIO(datos_de_imagen)
-                    imagen = Image.open(imagen_bytes)
+                    open_imagen = Image.open(imagen_bytes)
 
-                    imagen = ctk.CTkImage(dark_image=imagen, size=(230, 230))
-                    image_label = ctk.CTkLabel(self, image=imagen, text="", width=200, height=200)
+                    for temp, entry in zip(decoded_temps, self.device.listemp):
+                        match = self.device.zkfp2.DBMatch(tmp, temp)
+                        print(f"Score: {match}")
+                        if match > 80:
+                            print(
+                                f"Usuario identificado: ID = {entry['id']} , Score = {match} y empleado {entry['empleado']}")
+                            # dibuajr un label de que se identifico
+                            self.filter_image = ImageOps.colorize(open_imagen, "black", "green")
+
+                            label_check = ctk.CTkLabel(self,
+                                                       text=f"Usuario identificado: ID = {entry['id']} , Score = {match} y empleado {entry['empleado']}")
+                            label_check.pack(padx=10, pady=10)
+                            break
+
+                        else:
+                            print(f"Usuario no identificado: Score = {match}")
+                            # self.zkfp2.show_image(img)
+                            self.filter_image = ImageOps.colorize(open_imagen, "black", "red")
+
+                            self.label_check = ctk.CTkLabel(self, text=f"Usuario no identificado: Score = {match}")
+                            self.label_check.pack(padx=10, pady=10)
+                            break
+
+                    imagen_ctk = ctk.CTkImage(dark_image=self.filter_image, size=(200, 250))
+                    image_label = ctk.CTkLabel(self, image=imagen_ctk, text="", width=200, height=200)
                     image_label.pack(padx=10, pady=10)
                     break
 
