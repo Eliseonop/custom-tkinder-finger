@@ -98,6 +98,7 @@ class Device:
                 for entry in newlist:
                     self.listemp.append(entry)
                     # self.listemp.append(Huellas(entry["id"], entry["empleado"], entry["template"]))
+                print("Huellas dactilares cargadas correctamente")
                 print(self.listemp)
                 return True
             else:
