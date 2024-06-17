@@ -11,7 +11,7 @@ import threading
 class Marcar(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master, fg_color="transparent")
-        self.progress_bar = ctk.CTkProgressBar(self, width=600, height=5)
+        self.progress_bar = ctk.CTkProgressBar(self, width=800, height=5)
         self.progress_bar.pack(side="top", )
         self.boton = ctk.CTkButton(self, text="Vista 2", command=self.destroy)
         self.boton.pack(padx=20, pady=20)

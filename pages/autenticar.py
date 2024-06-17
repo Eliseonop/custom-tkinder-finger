@@ -51,7 +51,7 @@ class Autenticar(ctk.CTkFrame):
         password = self.entry_password.get()
 
         if self.auth.sign_in(username, password):
-            messagebox.showinfo("Success", "Login successful")
+            # messagebox.showinfo("Success", "Login successful")
             self.app.check_auth()  # Navegar a la página principal
         else:
             messagebox.showerror("Error", "Invalid credentials")

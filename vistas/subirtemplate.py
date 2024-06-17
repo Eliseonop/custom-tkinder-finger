@@ -13,7 +13,7 @@ class SubirTemplate(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master, fg_color="transparent")
         self.pack(fill="both", expand=True)
-        self.progress_bar = ctk.CTkProgressBar(self, width=600, height=5)
+        self.progress_bar = ctk.CTkProgressBar(self, width=800, height=5)
         self.progress_bar.pack(side="top", pady=2)
         self.zkfp2 = ZKFP2()
         self.zkfp2.Init()
