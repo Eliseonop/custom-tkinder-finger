@@ -15,8 +15,8 @@ class Sidebar(ctk.CTkFrame):
         self.master = master
         self.salir_callback = salir_callback
         self.auth = Auth()
-        image_path = os.path.join(os.path.dirname(__file__), "../utils")
-        self.logo_image = ctk.CTkImage(Image.open(os.path.join(image_path, "logo.png")), size=(50, 50))
+        # image_path = os.path.join(os.path.dirname(__file__))
+        self.logo_image = ctk.CTkImage(Image.open("logo.png"), size=(50, 50))
 
         self.logo_label = ctk.CTkLabel(self,
                                        image=self.logo_image,

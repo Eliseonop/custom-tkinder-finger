@@ -3,8 +3,7 @@ from base64 import b64encode, b64decode
 import requests
 import time
 from modelos.huellas import Huellas
-
-baseUrl = "http://localhost:8000/cms/fingerprint/"
+from config import CONFIG
 
 
 class Device:
@@ -16,6 +15,7 @@ class Device:
         self.img = None
         self.device = None
         self.listemp = []
+        self.url = CONFIG.BASE_URL_HUELLAS
         if device_count > 0:
             print(f"{device_count} dispositivos encontrados")
             self.device = self.zkfp2.OpenDevice(0)
@@ -76,7 +76,7 @@ class Device:
                 "empleado": finger_id,
                 "template": base64_templates
             }
-            response = requests.post(baseUrl, json=data)
+            response = requests.post(self.url, json=data)
 
             if response.status_code == 201:
                 print(response.json())
@@ -91,7 +91,7 @@ class Device:
     def cargar_huellas(self):
         try:
 
-            response = requests.get(baseUrl)
+            response = requests.get(self.url)
 
             if response.status_code == 200:
                 newlist = response.json()

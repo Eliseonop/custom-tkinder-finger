@@ -8,9 +8,10 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.geometry("1024x640")
-        self.resizable(False, False)
+        self.resizable(True, True)
+
         self.title("Tcontur Asistencia")
-        self.iconbitmap("./utils/favicon.ico")
+        self.iconbitmap("favicon.ico")
 
         # self.controlador = ControladorPrincipal(self)
         self.auth = Auth()

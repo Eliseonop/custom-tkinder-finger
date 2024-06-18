@@ -21,8 +21,10 @@ class Marcar(ctk.CTkFrame):
         self.image_label = None
         self.label_instruction = None
         self.label_result = None
-
+        self.threads = list()
+        self.esperar = False
         self.load_huellas()
+        self.on_auth_huellas()
 
     def load_huellas(self):
         def load():
@@ -38,9 +40,12 @@ class Marcar(ctk.CTkFrame):
                 self.label = ctk.CTkLabel(self, text="No se han podido cargar las huellas")
                 self.label.pack(padx=20, pady=20)
 
-        threading.Thread(target=load).start()
+        a = threading.Thread(target=load).start()
+        self.threads.append(a)
 
     def on_auth_huellas(self):
+
+
         def auth():
             # Clear previous labels
             if self.image_label:
@@ -55,7 +60,7 @@ class Marcar(ctk.CTkFrame):
             self.label_result = ctk.CTkLabel(self, text="Esperando huella...")
             self.label_result.pack(padx=10, pady=10)
 
-            while True:
+            while self.esperar:
                 capture = self.device.zkfp2.AcquireFingerprint()
                 if capture:
                     self.label_instruction.pack_forget()
@@ -74,13 +79,13 @@ class Marcar(ctk.CTkFrame):
                         match = self.device.zkfp2.DBMatch(tmp, temp)
 
                         if match > 80:
-                            self.filter_image = ImageOps.colorize(open_imagen, "black", (50, 205, 50))  # Green color
+                            self.filter_image = ImageOps.colorize(open_imagen, "black", "#a7f3d0")  # Green color
                             self.label_result.configure(
                                 text=f"Usuario identificado: Score = {match} y empleado {entry['empleado_name']} con ID = {entry['empleado']}"
                             )
                             break
                         else:
-                            self.filter_image = ImageOps.colorize(open_imagen, "black", "red")
+                            self.filter_image = ImageOps.colorize(open_imagen, "black", "#fecaca")
                             self.label_result.configure(text=f"Usuario no identificado: Score = {match}")
 
                     imagen_ctk = ctk.CTkImage(dark_image=self.filter_image, size=(200, 250))
@@ -88,4 +93,7 @@ class Marcar(ctk.CTkFrame):
                     self.image_label.pack(padx=10, pady=10)
                     break
 
+        self.esperar = True
         threading.Thread(target=auth).start()
+# binaries=[('C:\Users\Eliseo\PycharmProjects\tkinterfingerprint\.venv\Lib\site-packages\pyzkfp\libzkfpcsharp.dll', 'libzkfpcsharp.dll')],
+#
