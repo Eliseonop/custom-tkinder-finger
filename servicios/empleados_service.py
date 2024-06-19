@@ -23,10 +23,3 @@ class EmpleadosService:
         except requests.exceptions.RequestException as e:
             print(f"Error al obtener los empleados: {e}")
             return False
-
-# Ejemplo de uso:
-# auth = Auth()
-# if auth.sign_in('username', 'password'):
-#     empleados = Empleados(auth)
-#     lista_empleados = empleados.obtener_empleados()
-#     print(lista_empleados)

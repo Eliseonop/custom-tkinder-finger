@@ -8,7 +8,7 @@ from io import BytesIO
 from PIL import Image
 from pyzkfp import ZKFP2
 from servicios.finger_service import FingerService
-
+from time import sleep
 
 class SubirTemplate(ctk.CTkFrame):
     def __init__(self, master):
@@ -20,7 +20,7 @@ class SubirTemplate(ctk.CTkFrame):
         self.initialize_services()
 
         self.lista_empleados = []
-        self.nombres_empleados = []
+        self.filtered_empleados = []
         self.selected_template = None
         self.selected_empleado = None
 
@@ -29,6 +29,15 @@ class SubirTemplate(ctk.CTkFrame):
     def initialize_ui_elements(self):
         self.progress_bar = ctk.CTkProgressBar(self, width=800, height=5)
         self.progress_bar.pack(side="top", pady=2)
+
+        self.label_buscar = ctk.CTkLabel(self, text="Buscar Empleado")
+        self.label_buscar.pack(padx=20, pady=2)
+
+        self.var = StringVar()
+        self.entry = ctk.CTkEntry(self, textvariable=self.var)
+        self.entry.pack(padx=20, pady=2)
+        self.entry.bind('<KeyRelease>', self.check_autocomplete)
+
         self.image_label = None
         self.fingerprint_message_label = None
 
@@ -49,15 +58,16 @@ class SubirTemplate(ctk.CTkFrame):
         self.finger_service = FingerService(auth)
 
     def load_empleados(self):
-        threading.Thread(target=self.load_empleados_thread).start()
+        threading.Thread(target=self.load_empleados_thread, daemon=True).start()
 
     def load_empleados_thread(self):
         self.progress_bar.configure(mode="indeterminate")
         self.progress_bar.start()
 
         if self.empleados_service.obtener_empleados():
+            sleep(1)
             self.lista_empleados = self.empleados_service.empleados
-            self.nombres_empleados = ["Ninguno"] + [empleado['nombre'] for empleado in self.lista_empleados]
+            self.filtered_empleados = self.lista_empleados
             self.initialize_main_template()
             self.initialize_finger_template()
         else:
@@ -67,34 +77,47 @@ class SubirTemplate(ctk.CTkFrame):
         self.progress_bar.pack_forget()
 
     def initialize_main_template(self):
-        self.display_message("Subir Huella Digital")
-        self.display_message("Buscar Empleado", pady=2)
 
-        self.var = StringVar()
-        self.entry = ctk.CTkEntry(self, textvariable=self.var)
-        self.entry.pack(padx=20, pady=2)
-        self.entry.bind('<KeyRelease>', self.check_autocomplete)
+        self.display_message("Lista de Empleados", pady=2)
 
-        self.optionmenu_var = StringVar(value="Ninguno")
-        self.optionmenu = ctk.CTkOptionMenu(self, variable=self.optionmenu_var, values=self.nombres_empleados,
-                                            command=self.optionmenu_callback)
-        self.optionmenu.pack(padx=20, pady=20)
-        self.update_optionmenu(self.nombres_empleados)
+        self.scrollable_frame = ctk.CTkScrollableFrame(self, width=800, height=300)
+        self.scrollable_frame.pack(padx=20, pady=10)
 
-        self.submit_button_frame = ctk.CTkFrame(self, fg_color="transparent")
-        self.submit_button_frame.pack(side="bottom", pady=20)
+        self.create_employee_table()
 
-        self.submit_button = ctk.CTkButton(self.submit_button_frame, text="Registrar", command=self.submit_form,
-                                           state="disabled", fg_color="#4338ca")
-        self.submit_button.pack(padx=20, pady=20)
+    def create_employee_table(self):
+        for widget in self.scrollable_frame.winfo_children():
+            widget.destroy()
+
+        headers = ["Nombre", "Acciones"]
+        for i, header in enumerate(headers):
+            label = ctk.CTkLabel(self.scrollable_frame, text=header, font=("Arial", 12, "bold"))
+            label.grid(row=0, column=i, padx=10, pady=5)
+
+        for i, empleado in enumerate(self.filtered_empleados, start=1):
+            label = ctk.CTkLabel(self.scrollable_frame, text=empleado['nombre'])
+            label.grid(row=i, column=0, padx=10, pady=5)
+
+            button_frame = ctk.CTkFrame(self.scrollable_frame, fg_color="transparent")
+            button_frame.grid(row=i, column=1, padx=10, pady=5)
+
+            register_button = ctk.CTkButton(button_frame, text="Registrar Huella",
+                                            command=lambda e=empleado: threading.Thread(target=self.capture_fingerprint,
+                                                                                        args=(e,)).start())
+            register_button.pack(side="left", padx=5)
+
+            delete_button = ctk.CTkButton(button_frame, text="Eliminar Huella",
+                                          command=lambda e=empleado: threading.Thread(target=self.eliminar_huella,
+                                                                                      args=(e['id'],)).start())
+            delete_button.pack(side="left", padx=5)
 
     def initialize_finger_template(self):
-        button_frame = ctk.CTkFrame(self)
-        button_frame.pack(padx=20, pady=20)
-        self.boton_capture = ctk.CTkButton(button_frame, text="Capturar Huella", command=self.capture_fingerprint)
-        self.boton_capture.pack(side="left", padx=10)
+        self.capture_button = ctk.CTkButton(self, text="Capturar Huella", command=self.capture_fingerprint,
+                                            state="disabled")
+        self.capture_button.pack(padx=20, pady=20)
 
-    def capture_fingerprint(self):
+    def capture_fingerprint(self, empleado=None):
+        self.selected_empleado = empleado
         self.show_fingerprint_message("Poner Dedo en Huellero")
 
         templates, imgs = self.acquire_fingerprint_data()
@@ -147,24 +170,11 @@ class SubirTemplate(ctk.CTkFrame):
         label = ctk.CTkLabel(self, text=message)
         label.pack(padx=20, pady=pady)
 
-    def check_autocomplete(self, event):
-        typed = self.var.get().lower()
-        data = ["Ninguno"] + [item for item in self.nombres_empleados if
-                              typed in item.lower()] if typed else self.nombres_empleados
-        self.update_optionmenu(data)
-
-    def update_optionmenu(self, data):
-        self.optionmenu.configure(values=data)
-        self.optionmenu_var.set(data[0] if data else '')
-
-    def optionmenu_callback(self, choice):
-        self.selected_empleado = next((empleado for empleado in self.lista_empleados if empleado['nombre'] == choice),
-                                      None) if choice != "Ninguno" else None
-        self.update_submit_button_state()
-
     def update_submit_button_state(self):
-        self.submit_button.configure(
-            state="normal" if self.selected_empleado and self.selected_template else "disabled")
+        if self.selected_empleado and self.selected_template:
+            self.capture_button.configure(state="normal")
+        else:
+            self.capture_button.configure(state="disabled")
 
     def submit_form(self):
         if not self.selected_empleado:
@@ -178,4 +188,13 @@ class SubirTemplate(ctk.CTkFrame):
         }
 
         print("Enviando datos:", datos)
-        self.finger_service.push_finger(datos)
+        threading.Thread(target=self.finger_service.push_finger, args=(datos,)).start()
+
+    def eliminar_huella(self, empleado_id):
+        print(f"Eliminando huella del empleado con ID: {empleado_id}")
+        threading.Thread(target=self.finger_service.delete_finger, args=(empleado_id,)).start()
+
+    def check_autocomplete(self, event):
+        typed = self.var.get().lower()
+        self.filtered_empleados = [empleado for empleado in self.lista_empleados if typed in empleado['nombre'].lower()]
+        self.create_employee_table()

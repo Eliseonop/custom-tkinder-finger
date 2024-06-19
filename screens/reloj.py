@@ -24,11 +24,63 @@ class Reloj(ctk.CTkFrame):
         self.huellas_capturadas = False
         self.procesar_huella = True
         self.initialize_ui_elements()
+
+        self.is_active = True
+        # if threading.enumerate() == 1:
+        #
+
+        print(threading.active_count())
+        # for thread in threading.enumerate():
+        #     if thread is not threading.current_thread():
+        #         # thread.join()
+        #         print(f"Deteniendo hilo {thread.is_alive()} {thread}")
+        self.print_active_threads_and_check_duplicates()
+        # if threading.active_count() > 1:
         self.start_threads()
+
+    def print_active_threads_and_check_duplicates(self):
+        active_threads = threading.enumerate()
+        thread_names = set()
+        duplicates = []
+
+        print("Hilos activos:")
+        for thread in active_threads:
+            print(f"Nombre: {thread.name}, Identificador: {thread.ident}")
+            if thread.name in thread_names:
+                duplicates.append(thread.name)
+            else:
+                thread_names.add(thread.name)
+
+        if duplicates:
+            print("\nHilos duplicados encontrados:")
+            for name in duplicates:
+                print(name)
+        else:
+            print("\nNo se encontraron hilos duplicados.")
+
+    def destroy(self):
+        # self.destroy_threads()
+
+        super().destroy()
+
+    def destroy_threads(self):
+        print("Destruyendo Reloj")
+        self.is_active = False
+        for thread in threading.enumerate():
+            if thread is not threading.current_thread():
+                # thread.join()
+                print(f"Deteniendo hilo {thread.is_alive()} {thread}")
+        # super().destroy()
+        #
+        # for thread in threading.enumerate():
+        #     if thread is not threading.current_thread():
+        #         # thread.
+        #         print(f"Deteniendo hilo {thread}")
 
     def initialize_ui_elements(self):
         subframe = ctk.CTkFrame(self)
         subframe.configure(height=50)
+
         subframe.pack(fill="x", side="top")
 
         self.logo_image = ctk.CTkImage(Image.open("logo.png"), size=(50, 50))
@@ -54,22 +106,29 @@ class Reloj(ctk.CTkFrame):
         self.label_result = None
 
     def ir_a_configuracion(self):
+        # self.is_active = False
+        self.destroy_threads()
         self.master.on_page(Configuracion)
+        # self.destroy()
 
     def start_threads(self):
+
+        # if threading.active_count() == 1:
+
         threading.Thread(target=self.actualizar_reloj, daemon=True).start()
         threading.Thread(target=self.update_day, daemon=True).start()
         threading.Thread(target=self.load_huellas, daemon=True).start()
 
     def actualizar_reloj(self):
-        while True:
+        while self.is_active:
             ahora = datetime.now()
             hora_formateada = ahora.strftime('%H:%M:%S')
             self.label_hora.configure(text=hora_formateada)
+
             time.sleep(1)
 
     def update_day(self):
-        while True:
+        while self.is_active:
             ahora = datetime.now()
             dia_formateado = ahora.strftime('%A, %d de %B de %Y').capitalize()
             self.label_dia.configure(text=dia_formateado)
@@ -78,24 +137,30 @@ class Reloj(ctk.CTkFrame):
     def load_huellas(self):
         self.progress_bar.configure(mode="indeterminate")
         self.progress_bar.start()
-        carga = self.device.cargar_huellas()
-        self.progress_bar.stop()
-        self.progress_bar.pack_forget()
+        try:
+            print("Cargando huellas")
+            carga = self.device.cargar_huellas()
+            print("Huellas cargadas")
+            self.progress_bar.stop()
+            print("Deteniendo progress bar")
+            self.progress_bar.pack_forget()
 
-        if carga:
-
-            threading.Thread(target=self.auth, daemon=True).start()
-        else:
-            self.label_result = ctk.CTkLabel(self, text="No se han podido cargar las huellas")
-            self.label_result.pack(padx=20, pady=20)
+            if carga:
+                print("Huellas cargadas --- inciando auth")
+                threading.Thread(target=self.auth).start()
+            else:
+                self.label_result = ctk.CTkLabel(self, text="No se han podido cargar las huellas")
+                self.label_result.pack(padx=20, pady=20)
+        except Exception as e:
+            print(f"Error al cargar huellas: {e}")
 
     def auth(self):
-        while True:
+        while self.is_active:
             print("Esperando huella...")
             self.reset_ui()
             self.show_instruction("Ponga su dedo en el lector", "Esperando huella...")
 
-            while True:
+            while self.is_active:
                 try:
                     capture = self.device.zkfp2.AcquireFingerprint()
                     if capture:
