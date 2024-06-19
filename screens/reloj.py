@@ -21,7 +21,6 @@ class Reloj(ctk.CTkFrame):
         self.pack(fill="both", expand=True)
 
         self.device = Device()
-        self.esperar = threading.Event()
         self.huellas_capturadas = False
         self.procesar_huella = True
         self.initialize_ui_elements()
@@ -43,15 +42,13 @@ class Reloj(ctk.CTkFrame):
         self.label_dia = ctk.CTkLabel(subframe, text="", font=("Helvetica", 16), anchor='e')
         self.label_dia.pack(side="right", padx=20, pady=(20, 10))
 
-        self.label_hora = ctk.CTkLabel(self, text="", font=("Helvetica", 48), anchor='center')
+        self.label_hora = ctk.CTkLabel(self, text="", font=("Helvetica", 100), anchor='center')
         self.label_hora.pack(padx=20, pady=20, fill="both", expand=True)
-
-        self.progress_bar = ctk.CTkProgressBar(self, width=800, height=5)
-        self.progress_bar.pack(side="top")
 
         boton_configuracion = ctk.CTkButton(self, text="Configuración", command=self.ir_a_configuracion)
         boton_configuracion.pack(padx=20, pady=20, side="bottom", anchor="e")
-
+        self.progress_bar = ctk.CTkProgressBar(self, width=800, height=5)
+        self.progress_bar.pack(side="bottom", fill="x")
         self.image_label = None
         self.label_instruction = None
         self.label_result = None
@@ -86,7 +83,7 @@ class Reloj(ctk.CTkFrame):
         self.progress_bar.pack_forget()
 
         if carga:
-            self.esperar.set()
+
             threading.Thread(target=self.auth, daemon=True).start()
         else:
             self.label_result = ctk.CTkLabel(self, text="No se han podido cargar las huellas")
@@ -94,15 +91,18 @@ class Reloj(ctk.CTkFrame):
 
     def auth(self):
         while True:
+            print("Esperando huella...")
             self.reset_ui()
             self.show_instruction("Ponga su dedo en el lector", "Esperando huella...")
+
             while True:
                 try:
                     capture = self.device.zkfp2.AcquireFingerprint()
                     if capture:
+                        print("Huella capturada")
                         self.process_fingerprint(capture)
                         # self.schedule_next_capture()
-                        time.sleep(2)
+                        time.sleep(4)
                         break
                     # break
                 except Exception as e:
@@ -134,14 +134,18 @@ class Reloj(ctk.CTkFrame):
         self.open_imagen = Image.open(imagen_bytes)
 
         for temp, entry in zip(decoded_temps, self.device.listemp):
+            # self.progress_bar.step(20)
             match = self.device.zkfp2.DBMatch(tmp, temp)
             if match > 80:
+
+                hora = datetime.now().strftime('%H:%M:%S')
                 self.update_result("green",
-                                   f"Usuario identificado: Score = {match} y empleado {entry['empleado_name']} con ID = {entry['empleado']}")
+                                   f"Usuario identificado: Score = {match} y empleado   {entry['empleado_name']} con ID = {entry['empleado']} - Hora: {hora}")
                 break
             else:
                 self.update_result("red", f"Usuario no identificado: Score = {match}")
 
+        self.progress_bar.pack_forget()
         imagen_ctk = ctk.CTkImage(dark_image=self.filter_image, size=(200, 250))
         self.image_label = ctk.CTkLabel(self, image=imagen_ctk, text="", width=200, height=200)
         self.image_label.pack(padx=10, pady=10)

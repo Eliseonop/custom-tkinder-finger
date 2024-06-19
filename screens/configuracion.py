@@ -1,18 +1,39 @@
 import customtkinter as ctk
+from servicios.auth import Auth
+from vistas.vista_principal import VistaPrincipal
+from pages.autenticar import Autenticar
+
 
 class Configuracion(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
-        self.pack(fill="both", expand=True)
 
-        # Agregar elementos de configuración, por ejemplo, etiquetas, entradas, botones, etc.
-        label_config = ctk.CTkLabel(self, text="Configuración")
-        label_config.pack()
+        self.auth = Auth()
 
-        # Botón para volver al Frame de Reloj
-        boton_volver = ctk.CTkButton(self, text="Volver", command=self.volver_a_reloj)
-        boton_volver.pack()
+        self.check_auth()
 
     def volver_a_reloj(self):
         # Llamar a la función en App para volver al Frame de Reloj
         self.master.view_clock()
+
+    def check_auth(self):
+        print("Checking auth")
+        self.delete_pages()
+        if self.auth.get_access_token():
+            print("Access token found")
+            new_page = VistaPrincipal(self, self.auth, self.logout)
+            new_page.pack(fill="both", expand=True)
+            new_page.tkraise()
+        else:
+            print("Access token not found")
+            new_page = Autenticar(self, self.auth)
+            new_page.pack(fill="both", expand=True)
+            new_page.tkraise()
+
+    def delete_pages(self):
+        for widget in self.winfo_children():
+            widget.pack_forget()
+
+    def logout(self):
+        self.auth.sign_out()
+        self.check_auth()
