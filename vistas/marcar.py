@@ -95,5 +95,4 @@ class Marcar(ctk.CTkFrame):
 
         self.esperar = True
         threading.Thread(target=auth).start()
-# binaries=[('C:\Users\Eliseo\PycharmProjects\tkinterfingerprint\.venv\Lib\site-packages\pyzkfp\libzkfpcsharp.dll', 'libzkfpcsharp.dll')],
-#
+

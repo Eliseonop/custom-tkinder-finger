@@ -2,6 +2,7 @@ import customtkinter as ctk
 from servicios.auth import Auth
 from vistas.vista_principal import VistaPrincipal
 from pages.autenticar import Autenticar
+from screens.reloj import Reloj
 
 
 class App(ctk.CTk):
@@ -13,35 +14,29 @@ class App(ctk.CTk):
         self.title("Tcontur Asistencia")
         self.iconbitmap("favicon.ico")
 
-        # self.controlador = ControladorPrincipal(self)
-        self.auth = Auth()
-        self.check_auth()
+        self.view_clock()
 
-    def check_auth(self):
-        print("Checking auth")
+    def view_clock(self):
         self.delete_pages()
-        if self.auth.get_access_token():
-            print("Access token found")
-            new_page = VistaPrincipal(self, self.auth, self.logout)
-            new_page.pack(fill="both", expand=True)
-            new_page.tkraise()
-        else:
-            print("Access token not found")
-            new_page = Autenticar(self, self.auth)
-            new_page.pack(fill="both", expand=True)
-            new_page.tkraise()
+        new_page = Reloj(self)
+        new_page.pack(fill="both", expand=True)
+        new_page.tkraise()
 
-    # def on_page(self, page):
-    #     self.delete_pages()
-    #     new_page = page(self, self.auth)
-    #
-    #     new_page.pack(fill="both", expand=True)
-    #
-    #     new_page.tkraise()
+    def on_page(self, page):
+        self.delete_pages()
+        new_page = page(self)
+        new_page.pack(fill="both", expand=True)
+        new_page.tkraise()
 
     def delete_pages(self):
         for widget in self.winfo_children():
             widget.pack_forget()
+
+    def view_clock(self):
+        self.delete_pages()
+        new_page = Reloj(self)
+        new_page.pack(fill="both", expand=True)
+        new_page.tkraise()
 
     def logout(self):
         self.auth.sign_out()
