@@ -3,3 +3,5 @@ config.py
 .env
 ./dist
 ./build
+/dist/
+/build/
