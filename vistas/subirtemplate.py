@@ -31,7 +31,7 @@ class SubirTemplate(ctk.CTkFrame):
 
     def initialize_ui_elements(self):
         self.progress_bar = ctk.CTkProgressBar(self, width=800, height=5)
-        self.progress_bar.pack(side="top", pady=2)
+        self.progress_bar.pack(side="top", pady=2, fill="x")
 
         self.label_buscar = ctk.CTkLabel(self, text="Buscar Empleado")
         self.label_buscar.pack(padx=20, pady=2)
@@ -124,7 +124,8 @@ class SubirTemplate(ctk.CTkFrame):
         if self.frame_action is not None:
             self.frame_action.pack_forget()
 
-        self.selected_empleado = empleado
+        if empleado:
+            self.selected_empleado = empleado
 
         self.show_fingerprint_message(
             f"Por favor, coloque su dedo en el lector de huellas, {self.selected_empleado['nombre']}.")

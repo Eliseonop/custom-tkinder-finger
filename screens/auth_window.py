@@ -8,6 +8,11 @@ class AuthWindow(ctk.CTkToplevel):
         self.title("Ventana de Autenticación")
         self.geometry("300x200")
 
+        # mantenemos esta ventana en primer plano
+        self.attributes("-topmost", True)
+        # la centramos en base a la ventana principal
+        self.geometry(f"+{master.winfo_x() + 50}+{master.winfo_y() + 50}")
+
         self.label = ctk.CTkLabel(self, text="Introduce tu token:")
         self.label.pack(pady=20)
 
