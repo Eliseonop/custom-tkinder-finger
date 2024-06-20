@@ -8,7 +8,7 @@ from screens.reloj import Reloj
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.geometry("1024x640")
+        self.geometry("1366x768")
         self.resizable(True, True)
 
         self.title("Tcontur Asistencia")

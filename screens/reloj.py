@@ -8,8 +8,8 @@ import threading
 import time
 import locale
 from screens.configuracion import Configuracion
-from time import sleep
-import asyncio
+
+from servicios.marcaciones_service import MarcacionesService
 
 # Establecer la configuración regional en español
 locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
@@ -21,6 +21,7 @@ class Reloj(ctk.CTkFrame):
         self.pack(fill="both", expand=True)
 
         self.device = Device()
+        # self.marcaciones_service = MarcacionesService()
         self.huellas_capturadas = False
         self.procesar_huella = True
         self.initialize_ui_elements()

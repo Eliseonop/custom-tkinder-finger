@@ -10,6 +10,7 @@ from pyzkfp import ZKFP2
 from servicios.finger_service import FingerService
 from time import sleep
 
+
 class SubirTemplate(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master, fg_color="transparent")
@@ -24,6 +25,8 @@ class SubirTemplate(ctk.CTkFrame):
         self.selected_template = None
         self.selected_empleado = None
 
+        self.frame_action = None
+        self.scroll_height = 250
         self.load_empleados()
 
     def initialize_ui_elements(self):
@@ -69,7 +72,7 @@ class SubirTemplate(ctk.CTkFrame):
             self.lista_empleados = self.empleados_service.empleados
             self.filtered_empleados = self.lista_empleados
             self.initialize_main_template()
-            self.initialize_finger_template()
+            # self.initialize_finger_template()
         else:
             print('No se han podido cargar las huellas')
             self.display_message("No se han podido cargar las huellas")
@@ -77,10 +80,7 @@ class SubirTemplate(ctk.CTkFrame):
         self.progress_bar.pack_forget()
 
     def initialize_main_template(self):
-
-        self.display_message("Lista de Empleados", pady=2)
-
-        self.scrollable_frame = ctk.CTkScrollableFrame(self, width=800, height=300)
+        self.scrollable_frame = ctk.CTkScrollableFrame(self, width=600, height=self.scroll_height)
         self.scrollable_frame.pack(padx=20, pady=10)
 
         self.create_employee_table()
@@ -95,37 +95,57 @@ class SubirTemplate(ctk.CTkFrame):
             label.grid(row=0, column=i, padx=10, pady=5)
 
         for i, empleado in enumerate(self.filtered_empleados, start=1):
-            label = ctk.CTkLabel(self.scrollable_frame, text=empleado['nombre'])
-            label.grid(row=i, column=0, padx=10, pady=5)
+            label = ctk.CTkLabel(self.scrollable_frame, text=empleado['nombre'], width=300)
+            label.grid(row=i, column=0, padx=5, pady=5)
 
-            button_frame = ctk.CTkFrame(self.scrollable_frame, fg_color="transparent")
-            button_frame.grid(row=i, column=1, padx=10, pady=5)
-
-            register_button = ctk.CTkButton(button_frame, text="Registrar Huella",
+            register_button = ctk.CTkButton(self.scrollable_frame, text="Registrar Huella",
                                             command=lambda e=empleado: threading.Thread(target=self.capture_fingerprint,
                                                                                         args=(e,)).start())
-            register_button.pack(side="left", padx=5)
-
-            delete_button = ctk.CTkButton(button_frame, text="Eliminar Huella",
-                                          command=lambda e=empleado: threading.Thread(target=self.eliminar_huella,
-                                                                                      args=(e['id'],)).start())
-            delete_button.pack(side="left", padx=5)
+            register_button.grid(row=i, column=1, padx=5, pady=5)
 
     def initialize_finger_template(self):
-        self.capture_button = ctk.CTkButton(self, text="Capturar Huella", command=self.capture_fingerprint,
-                                            state="disabled")
-        self.capture_button.pack(padx=20, pady=20)
+        self.frame_action = ctk.CTkFrame(self)
+        self.frame_action.pack(pady=20)
+
+        self.capture_button = ctk.CTkButton(self.frame_action, text="Reintentar", command=self.capture_fingerprint)
+        self.capture_button.pack(padx=20, pady=20, side="left")
+
+        self.cancel_button = ctk.CTkButton(self.frame_action, text="Cancelar", command=self.cancelar)
+        self.cancel_button.pack(padx=20, pady=20, side="left")
+
+        self.submit_button = ctk.CTkButton(self.frame_action, text="Registrar", command=self.submit_form,
+                                           fg_color="indigo")
+        self.submit_button.pack(padx=20, pady=20, side="left")
 
     def capture_fingerprint(self, empleado=None):
+        print("Capturando huella")
+        print(self.selected_empleado)
+
+        if self.frame_action is not None:
+            self.frame_action.pack_forget()
+
         self.selected_empleado = empleado
-        self.show_fingerprint_message("Poner Dedo en Huellero")
+
+        self.show_fingerprint_message(
+            f"Por favor, coloque su dedo en el lector de huellas, {self.selected_empleado['nombre']}.")
 
         templates, imgs = self.acquire_fingerprint_data()
         if templates and imgs:
             self.selected_template = b64encode(bytes(templates[0])).decode()
             self.write_img(imgs[0])
-            self.update_submit_button_state()
+            self.initialize_finger_template()
 
+        self.hide_fingerprint_message()
+
+    def cancelar(self):
+        self.selected_empleado = None
+        self.selected_template = None
+        if self.image_label:
+            self.image_label.pack_forget()
+            self.image_label = None
+        if self.frame_action:
+            self.frame_action.pack_forget()
+            self.frame_action = None
         self.hide_fingerprint_message()
 
     def acquire_fingerprint_data(self):
@@ -143,10 +163,10 @@ class SubirTemplate(ctk.CTkFrame):
         if self.image_label:
             self.image_label.pack_forget()
         if not self.fingerprint_message_label:
-            self.fingerprint_message_label = ctk.CTkLabel(self, text=message)
+            self.fingerprint_message_label = ctk.CTkLabel(self, text=message, font=("Arial", 12, "bold"))
         else:
             self.fingerprint_message_label.configure(text=message)
-        self.fingerprint_message_label.pack(pady=10)
+        self.fingerprint_message_label.pack(pady=10, padx=10 * 2)
         self.update()
 
     def hide_fingerprint_message(self):

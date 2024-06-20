@@ -17,7 +17,8 @@ class Autenticar(ctk.CTkFrame):
         self.create_widgets()
 
         self.button_volver = ctk.CTkButton(self, text="Volver", command=self.app.volver_a_reloj)
-        self.button_volver.pack(pady=(20, 10))
+        self.button_volver.pack(padx=20, pady=20, side="bottom", anchor="e")
+        # boton_configuracion.pack(padx=20, pady=20, )
 
     def volver_a_reloj(self):
         self.app.view_clock()
