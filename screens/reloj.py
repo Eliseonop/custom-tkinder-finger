@@ -8,7 +8,7 @@ import threading
 import time
 import locale
 from screens.configuracion import Configuracion
-
+from screens.auth_window import AuthWindow
 from servicios.marcaciones_service import MarcacionesService
 
 # Establecer la configuración regional en español
@@ -100,8 +100,8 @@ class Reloj(ctk.CTkFrame):
 
         boton_configuracion = ctk.CTkButton(self, text="Configuración", command=self.ir_a_configuracion)
         boton_configuracion.pack(padx=20, pady=20, side="bottom", anchor="e")
-        self.progress_bar = ctk.CTkProgressBar(self, width=800, height=5)
-        self.progress_bar.pack(side="bottom", fill="x")
+        self.progress_bar = ctk.CTkProgressBar(self, width=400, height=5)
+        self.progress_bar.pack(side="bottom", )
         self.image_label = None
         self.label_instruction = None
         self.label_result = None
@@ -152,8 +152,14 @@ class Reloj(ctk.CTkFrame):
             else:
                 self.label_result = ctk.CTkLabel(self, text="No se han podido cargar las huellas")
                 self.label_result.pack(padx=20, pady=20)
+                self.boton_autenticar = ctk.CTkButton(self, text="Autenticar", command=self.go_to_autenticar)
+                self.boton_autenticar.pack(padx=20, pady=20)
+
         except Exception as e:
             print(f"Error al cargar huellas: {e}")
+
+    def go_to_autenticar(self):
+        self.master.on_page(AuthWindow)
 
     def auth(self):
         while self.is_active:
@@ -212,7 +218,7 @@ class Reloj(ctk.CTkFrame):
                 self.update_result("red", f"Usuario no identificado: Score = {match}")
 
         self.progress_bar.pack_forget()
-        imagen_ctk = ctk.CTkImage(dark_image=self.filter_image, size=(200, 250))
+        imagen_ctk = ctk.CTkImage(light_image=self.filter_image, dark_image=self.filter_image, size=(200, 250))
         self.image_label = ctk.CTkLabel(self, image=imagen_ctk, text="", width=200, height=200)
         self.image_label.pack(padx=10, pady=10)
 

@@ -5,7 +5,7 @@ import requests
 
 class MarcacionesService:
     def __init__(self, auth: Auth):
-        self.base_url = CONFIG.BASE_URL_API
+        self.base_url = CONFIG.BASE_URL_PLANILLA
         self.auth = auth
 
     def create_marcacion(self, data: {

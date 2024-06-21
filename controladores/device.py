@@ -4,6 +4,7 @@ import requests
 import time
 from modelos.huellas import Huellas
 from config import CONFIG
+from utils.storage import Storage
 
 
 class Device:
@@ -12,8 +13,11 @@ class Device:
         self.zkfp2 = ZKFP2()
         self.zkfp2.Init()
         device_count = self.zkfp2.GetDeviceCount()
+        self.storage = Storage()
+
         self.img = None
         self.device = None
+
         self.listemp = []
         self.url = CONFIG.BASE_URL_HUELLAS
         if device_count > 0:
@@ -26,6 +30,12 @@ class Device:
             # exit()
 
         self.listemp: list(Huellas) = []
+
+    def set_token(self, token):
+        self.storage.save('token_huella', token)
+
+    def get_token(self):
+        return self.storage.load('token_huella')
 
     def info_dispositivo(self):
         cantidad_dispositivos = self.zkfp2.GetDeviceCount()
@@ -89,6 +99,7 @@ class Device:
             print(f"Error al registrar la huella: {e}")
 
     def cargar_huellas(self):
+        print(self.get_token() + "token")
         try:
 
             response = requests.get(self.url)

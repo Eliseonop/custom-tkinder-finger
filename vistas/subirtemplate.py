@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from tkinter import StringVar
-from servicios.empleados_service import EmpleadosService
+from servicios.planilla_service import PlanillaService
 from servicios.auth import Auth
 import threading
 from base64 import b64encode, b64decode
@@ -57,7 +57,7 @@ class SubirTemplate(ctk.CTkFrame):
 
     def initialize_services(self):
         auth = Auth()
-        self.empleados_service = EmpleadosService(auth)
+        self.empleados_service = PlanillaService(auth)
         self.finger_service = FingerService(auth)
 
     def load_empleados(self):
@@ -68,14 +68,14 @@ class SubirTemplate(ctk.CTkFrame):
         self.progress_bar.start()
 
         if self.empleados_service.obtener_empleados():
-            sleep(1)
+            # sleep(1)
             self.lista_empleados = self.empleados_service.empleados
             self.filtered_empleados = self.lista_empleados
             self.initialize_main_template()
             # self.initialize_finger_template()
         else:
             print('No se han podido cargar las huellas')
-            self.display_message("No se han podido cargar las huellas")
+            self.display_message("No se han podido cargar los empleados")
 
         self.progress_bar.pack_forget()
 

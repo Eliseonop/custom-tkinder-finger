@@ -3,9 +3,9 @@ import requests
 from servicios.auth import Auth
 
 
-class EmpleadosService:
+class PlanillaService:
     def __init__(self, auth: Auth):
-        self.base_url = CONFIG.BASE_URL_API
+        self.base_url = CONFIG.BASE_URL_PLANILLA
         self.auth = auth
         self.empleados = []
 

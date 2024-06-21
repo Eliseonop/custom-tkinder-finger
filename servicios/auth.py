@@ -6,7 +6,7 @@ from utils.storage import Storage
 
 class Auth:
     def __init__(self):
-        self.base_url = CONFIG.BASE_URL_API
+        self.base_url = CONFIG.BASE_URL_PLANILLA
         self.storage = Storage()
 
     def sign_in(self, username, password):

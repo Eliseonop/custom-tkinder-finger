@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from controladores.device import Device
 from vistas.subirtemplate import SubirTemplate
-from vistas.marcar import Marcar
+from vistas.servidor import Servidor
 from vistas.dispositivo import Dispositivo
 from utils.sidebar import Sidebar
 from utils.body import Body
@@ -41,7 +41,7 @@ class VistaPrincipal(ctk.CTkFrame):
     def create_sidebar(self):
         button_info_list = [
             {"name": "Registrar", "vista": SubirTemplate},
-            {"name": "Marcar", "vista": Marcar},  # Ajusta el nombre y la vista según tus necesidades
+            {"name": "Servidor", "vista": Servidor},  # Ajusta el nombre y la vista según tus necesidades
             {"name": "Dispositivo", "vista": Dispositivo}
         ]
 
