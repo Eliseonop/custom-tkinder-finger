@@ -106,6 +106,8 @@ class Reloj(ctk.CTkFrame):
         self.label_instruction = None
         self.label_result = None
 
+
+
     def ir_a_configuracion(self):
         # self.is_active = False
         self.destroy_threads()

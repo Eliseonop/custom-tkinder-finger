@@ -5,6 +5,7 @@ from PIL import Image
 import threading
 from screens.auth_window import AuthWindow
 
+
 class Autenticar(ctk.CTkFrame):
     def __init__(self, parent, auth: Auth):
         super().__init__(parent)
@@ -21,26 +22,15 @@ class Autenticar(ctk.CTkFrame):
         self.button_volver = ctk.CTkButton(self, text="Volver", command=self.app.volver_a_reloj)
         self.button_volver.pack(padx=20, pady=20, side="bottom", anchor="e")
 
-        self.button_window = ctk.CTkButton(self, text="Autenticar", command=self.open_auth_window,
-                                           fg_color="indigo",
-
-                                           font=("Helvetica", 12))
-        self.button_window.pack(padx=20, pady=20, side="bottom", anchor="w")
-        # boton_configuracion.pack(padx=20, pady=20, )
-        self.token_label = ctk.CTkLabel(self, text="Token: No autenticado")
-        self.token_label.pack(pady=20)
-
-
-    def open_auth_window(self):
-        self.auth_window = AuthWindow(self)
-
-    def set_token(self, token):
-        self.token_label.configure(text=f"Token: {token}")
-
     def volver_a_reloj(self):
         self.app.view_clock()
 
     def create_logo(self):
+        # Un titulo , debe decir , Configuracion
+
+        self.label_title = ctk.CTkLabel(self, text="Configuración", font=ctk.CTkFont(size=20, weight="bold"))
+        self.label_title.pack(pady=(20, 20))
+
         self.logo_image = ctk.CTkImage(Image.open("logo.png"), size=(50, 50))
         self.logo_label = ctk.CTkLabel(self, image=self.logo_image, text="", font=ctk.CTkFont(size=20, weight="bold"),
                                        compound="left")
