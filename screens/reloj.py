@@ -89,24 +89,22 @@ class Reloj(ctk.CTkFrame):
                                        font=ctk.CTkFont(size=20, weight="bold"), compound="left")
         self.logo_label.pack(side="left", padx=20, pady=(20, 10))
 
-        self.label_title = ctk.CTkLabel(subframe, text="Tcontur Asistencia", font=ctk.CTkFont(size=20, weight="bold"))
+        self.label_title = ctk.CTkLabel(subframe, text="Tcontur Asistencia", font=ctk.CTkFont(size=22, weight="bold"))
         self.label_title.pack(side="left", padx=20, pady=(20, 10))
 
-        self.label_dia = ctk.CTkLabel(subframe, text="", font=("Helvetica", 16), anchor='e')
+        self.label_dia = ctk.CTkLabel(subframe, text="", font=("Helvetica", 18), anchor='e')
         self.label_dia.pack(side="right", padx=20, pady=(20, 10))
 
-        self.label_hora = ctk.CTkLabel(self, text="", font=("Helvetica", 100), anchor='center')
+        self.label_hora = ctk.CTkLabel(self, text="", font=("Helvetica", 120), anchor='center')
         self.label_hora.pack(padx=20, pady=20, fill="both", expand=True)
 
         boton_configuracion = ctk.CTkButton(self, text="Configuración", command=self.ir_a_configuracion)
         boton_configuracion.pack(padx=20, pady=20, side="bottom", anchor="e")
         self.progress_bar = ctk.CTkProgressBar(self, width=400, height=5)
-        self.progress_bar.pack(side="bottom", )
+        self.progress_bar.pack(side="bottom", pady=60)
         self.image_label = None
         self.label_instruction = None
         self.label_result = None
-
-
 
     def ir_a_configuracion(self):
         # self.is_active = False

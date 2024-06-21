@@ -5,6 +5,7 @@ import time
 from modelos.huellas import Huellas
 from config import CONFIG
 from utils.storage import Storage
+from servicios.urbanito_service import UrbanitoService
 
 
 class Device:
@@ -14,7 +15,7 @@ class Device:
         self.zkfp2.Init()
         device_count = self.zkfp2.GetDeviceCount()
         self.storage = Storage()
-
+        self.urbanito_service = UrbanitoService()
         self.img = None
         self.device = None
 
@@ -63,7 +64,9 @@ class Device:
         return my_img
 
     def registrar_huella(self):
+
         print("Coloca tu dedo en el escáner para registrar...")
+
         templates = []
 
         self.zkfp2.Light('green')
@@ -100,6 +103,7 @@ class Device:
 
     def cargar_huellas(self):
         print(self.get_token() + "token")
+        print(self.urbanito_service.get_empresa_storage())
         try:
 
             response = requests.get(self.url)
