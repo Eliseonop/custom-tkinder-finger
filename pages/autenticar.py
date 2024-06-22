@@ -22,7 +22,7 @@ class Autenticar(ctk.CTkFrame):
         self.delete_pages()
         sub_frame = ctk.CTkFrame(self)
         sub_frame.pack(expand=True, fill="both")
-        servidor = Servidor(sub_frame, empresa_service=self.empresa_service)
+        servidor = Servidor(sub_frame)
         servidor.pack(expand=True, fill="both")
 
         button_volver = ctk.CTkButton(sub_frame, text="Volver", command=self.render_principal)

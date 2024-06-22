@@ -19,15 +19,21 @@ class SubirTemplate(ctk.CTkScrollableFrame):
         self.initialize_ui_elements()
         self.initialize_fingerprint_device()
         self.initialize_services(auth)
-
+        print("Inicializando vista de subir template")
         self.lista_empleados = []
         self.filtered_empleados = []
         self.selected_template = None
         self.selected_empleado = None
-
+        self.whileValue = False
         self.frame_action = None
         self.scroll_height = 550
         self.load_empleados()
+
+    def destroy(self):
+        self.whileValue = False
+        # self.zkfp2.Terminate()Q
+        print("Destruyendo vista de subir template")
+        super().destroy()
 
     def initialize_ui_elements(self):
         self.progress_bar = ctk.CTkProgressBar(self, width=800, height=5)
@@ -62,7 +68,7 @@ class SubirTemplate(ctk.CTkScrollableFrame):
         self.finger_service = FingerService(auth)
 
     def load_empleados(self):
-        threading.Thread(target=self.load_empleados_thread, daemon=True).start()
+        threading.Thread(target=self.load_empleados_thread).start()
 
     def load_empleados_thread(self):
         self.progress_bar.configure(mode="indeterminate")
@@ -117,8 +123,7 @@ class SubirTemplate(ctk.CTkScrollableFrame):
             label.grid(row=i, column=0, padx=5, pady=5)
 
             register_button = ctk.CTkButton(self.scrollable_frame, text="Registrar Huella",
-                                            command=lambda e=empleado: threading.Thread(target=self.capture_fingerprint,
-                                                                                        args=(e,)).start())
+                                            command=lambda e=empleado: self.capture_fingerprint(e))
             register_button.grid(row=i, column=1, padx=5, pady=5)
 
     def initialize_finger_template(self):
@@ -153,7 +158,7 @@ class SubirTemplate(ctk.CTkScrollableFrame):
             self.selected_empleado = empleado
 
         self.show_fingerprint_message()
-        threading.Thread(target=self.thread_capture_fingerprint).start()
+        self.thread_fing = threading.Thread(target=self.thread_capture_fingerprint).start()
 
     def cancelar(self):
         self.selected_empleado = None
@@ -182,6 +187,8 @@ class SubirTemplate(ctk.CTkScrollableFrame):
 
         while self.whileValue:
             capture = self.zkfp2.AcquireFingerprint()
+            if self.whileValue is False:
+                break
             if capture:
                 print('Huella dactilar capturada')
                 templates.append(capture[0])

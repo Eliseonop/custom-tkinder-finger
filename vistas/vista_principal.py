@@ -96,6 +96,7 @@ class VistaPrincipal(ctk.CTkFrame):
 
     def delete_pages(self):
         for widget in self.main.winfo_children():
+            widget.destroy()
             widget.pack_forget()  # Quitamos todos los widgets del body
 
     # def create_sidebar(self):

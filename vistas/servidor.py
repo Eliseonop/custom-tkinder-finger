@@ -3,13 +3,13 @@ import threading
 from servicios.empresa_service import EmpresaService
 from tkinter import StringVar
 from PIL import Image
-
+from servicios.auth import Auth
 
 class Servidor(ctk.CTkFrame):
-    def __init__(self, master, empresa_service: EmpresaService):
+    def __init__(self, master, auth: Auth):
         super().__init__(master)
-
-        self.urbanito_service = empresa_service
+        self.auth = auth
+        self.urbanito_service = EmpresaService()
         self.progress_bar = ctk.CTkProgressBar(self, width=800, height=5)
         self.progress_bar.pack(side="top", pady=1, fill="x")
         self.initialize_ui_elements()
