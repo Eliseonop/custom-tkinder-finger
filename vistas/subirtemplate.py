@@ -11,7 +11,7 @@ from servicios.finger_service import FingerService
 from time import sleep
 
 
-class SubirTemplate(ctk.CTkFrame):
+class SubirTemplate(ctk.CTkScrollableFrame):
     def __init__(self, master):
         super().__init__(master)
         self.pack(fill="both", expand=True)

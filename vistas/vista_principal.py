@@ -20,7 +20,8 @@ class VistaPrincipal(ctk.CTkFrame):
 
         self.buttons = [
             {"name": "Registrar", "vista": SubirTemplate, "icon": "user_add.png"},
-            {"name": "Servidor", "vista": Servidor},  # Ajusta el nombre y la vista según tus necesidades
+            {"name": "Servidor", "vista": Servidor, "icon": "server.png"},
+            # Ajusta el nombre y la vista según tus necesidades
             # {"name": "Dispositivo", "vista": Dispositivo}
         ]
 
@@ -55,7 +56,7 @@ class VistaPrincipal(ctk.CTkFrame):
         self.container = ctk.CTkFrame(self.main, )
         self.container.pack(expand=True, fill="both")
 
-        for i in range(2):
+        for i in range(self.buttons.__len__()):
             self.container.grid_columnconfigure(i, weight=1)
             self.container.grid_rowconfigure(i, weight=1)
 
@@ -63,10 +64,21 @@ class VistaPrincipal(ctk.CTkFrame):
         for index, button_info in enumerate(self.buttons):
             name = button_info["name"]
             vista = button_info["vista"]
+            icon = button_info["icon"]
             row = index // 2
             col = index % 2
-            button = ctk.CTkButton(self.container, text=name, command=lambda v=vista: self.on_page(v))
-            button.grid(row=row, column=col, padx=10, pady=10)
+
+            subframe = ctk.CTkFrame(self.container)
+            subframe.grid(row=row, column=col, padx=30, pady=30)
+            icon = ctk.CTkImage(Image.open(icon), size=(50, 50))
+            icon_label = ctk.CTkLabel(subframe, image=icon, text="",
+                                      font=ctk.CTkFont(size=20, weight="bold"), compound="left")
+            icon_label.pack(side="left", padx=20, pady=(20, 10))
+
+            button = ctk.CTkButton(subframe, text=name, command=lambda v=vista: self.on_page(v),
+                                   font=("Helvetica", 22))
+            button.pack(padx=20, pady=(20, 20))
+            # button.grid(row=row, column=col, padx=10, pady=10)
 
         # def salir(self):
         #     self.logout()

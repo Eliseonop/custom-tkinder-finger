@@ -18,9 +18,36 @@ class Autenticar(ctk.CTkFrame):
         # self.progress_bar.pack_forget()
         self.create_logo()
         self.create_widgets()
-
+        self.create_scale()
         self.button_volver = ctk.CTkButton(self, text="Volver", command=self.app.volver_a_reloj)
         self.button_volver.pack(padx=20, pady=20, side="bottom", anchor="e")
+
+    def create_scale(self):
+        frame_scale = ctk.CTkFrame(self)
+        frame_scale.pack(pady=(20, 20), padx=(20, 20), side="bottom", anchor="w")
+        self.appearance_mode_label = ctk.CTkLabel(frame_scale, text="Tema:", anchor="w")
+        self.appearance_mode_label.pack(side="left", padx=20)
+        self.appearance_mode_optionemenu = ctk.CTkOptionMenu(frame_scale,
+                                                             values=["Light", "Dark", "System"],
+                                                             command=self.change_appearance_mode_event,
+                                                             variable=ctk.StringVar(value="System"))
+        self.appearance_mode_optionemenu.pack(side="left", padx=20)
+
+        self.scaling_label = ctk.CTkLabel(frame_scale, text="Escala UI :", anchor="w")
+        self.scaling_label.pack(side="left", padx=20)
+        self.scaling_optionemenu = ctk.CTkOptionMenu(frame_scale,
+                                                     values=["80%", "90%", "100%", "110%", "120%"],
+                                                     command=self.change_scaling_event,
+                                                     variable=ctk.StringVar(value="100%")
+                                                     )
+        self.scaling_optionemenu.pack(side="left", padx=20)
+
+    def change_appearance_mode_event(self, new_appearance_mode: str):
+        ctk.set_appearance_mode(new_appearance_mode)
+
+    def change_scaling_event(self, new_scaling: str):
+        new_scaling_float = int(new_scaling.replace("%", "")) / 100
+        ctk.set_widget_scaling(new_scaling_float)
 
     def volver_a_reloj(self):
         self.app.view_clock()

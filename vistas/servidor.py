@@ -7,7 +7,7 @@ from PIL import Image
 
 class Servidor(ctk.CTkFrame):
     def __init__(self, master):
-        super().__init__(master, fg_color="transparent")
+        super().__init__(master)
         self.urbanito_service = UrbanitoService()
 
         self.initialize_ui_elements()
