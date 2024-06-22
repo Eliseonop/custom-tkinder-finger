@@ -1,10 +1,9 @@
 from config import CONFIG
 import requests
-from servicios.auth import Auth
 from utils.storage import Storage
 
 
-class UrbanitoService:
+class EmpresaService:
     def __init__(self):
         self.base_url = CONFIG.API_URL_URBANITO
         self.storage = Storage()

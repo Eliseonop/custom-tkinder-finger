@@ -26,7 +26,7 @@ class Configuracion(ctk.CTkFrame):
     def check_auth(self):
         print("Checking auth")
         self.delete_pages()
-        if self.auth.get_access_token():
+        if self.auth.token:
             print("Access token found")
             new_page = VistaPrincipal(self, self.auth, self.logout)
             new_page.pack(fill="both", expand=True)

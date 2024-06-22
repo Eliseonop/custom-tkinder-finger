@@ -4,6 +4,8 @@ from servicios.auth import Auth
 from PIL import Image
 import threading
 from screens.auth_window import AuthWindow
+from servicios.empresa_service import EmpresaService
+from vistas.servidor import Servidor
 
 
 class Autenticar(ctk.CTkFrame):
@@ -11,16 +13,40 @@ class Autenticar(ctk.CTkFrame):
         super().__init__(parent)
         print("Autenticar")
         self.auth = auth
+        self.empresa_service = EmpresaService()
         self.app = parent
-        self.progress_bar = ctk.CTkProgressBar(self, width=800, height=0)
+        self.progress_bar = ctk.CTkProgressBar(self, width=800, height=5)
         self.progress_bar.configure(mode="indeterminate")
         self.progress_bar.pack(side="top", fill="x")
         # self.progress_bar.pack_forget()
+        # self.create_logo()
+        # self.create_widgets()
+        # self.create_scale()
+        # self.button_volver = ctk.CTkButton(self, text="Volver", command=self.app.volver_a_reloj)
+        # self.button_volver.pack(padx=20, pady=20, side="bottom", anchor="e")
+        self.render_principal()
+
+    def create_widget_empresa(self):
+        self.delete_pages()
+        sub_frame = ctk.CTkFrame(self)
+        sub_frame.pack(expand=True, fill="both")
+        servidor = Servidor(sub_frame, empresa_service=self.empresa_service)
+        servidor.pack(expand=True, fill="both")
+
+        button_volver = ctk.CTkButton(sub_frame, text="Volver", command=self.render_principal)
+        button_volver.pack(padx=20, pady=20, side="bottom", anchor="e")
+
+    def render_principal(self):
+        self.delete_pages()
         self.create_logo()
         self.create_widgets()
         self.create_scale()
         self.button_volver = ctk.CTkButton(self, text="Volver", command=self.app.volver_a_reloj)
         self.button_volver.pack(padx=20, pady=20, side="bottom", anchor="e")
+
+    def delete_pages(self):
+        for widget in self.winfo_children():
+            widget.pack_forget()
 
     def create_scale(self):
         frame_scale = ctk.CTkFrame(self)
@@ -55,7 +81,8 @@ class Autenticar(ctk.CTkFrame):
     def create_logo(self):
         # Un titulo , debe decir , Configuracion
 
-        self.label_title = ctk.CTkLabel(self, text="Configuración", font=ctk.CTkFont(size=20, weight="bold"))
+        self.label_title = ctk.CTkLabel(self, text="Configuración del Sistema",
+                                        font=ctk.CTkFont(size=20, weight="bold"))
         self.label_title.pack(pady=(20, 20))
 
         self.logo_image = ctk.CTkImage(Image.open("logo.png"), size=(50, 50))
@@ -65,6 +92,20 @@ class Autenticar(ctk.CTkFrame):
 
     def create_widgets(self):
         # Frame para username
+        frame_empresa = ctk.CTkFrame(self)
+        frame_empresa.pack()
+        if self.empresa_service.get_empresa_storage() is None:
+            label_empresa = ctk.CTkLabel(frame_empresa, text="! Aun no se ha seleccionado una empresa !")
+            label_empresa.pack(pady=(10, 5), padx=(10, 10))
+            self.button_empresa = ctk.CTkButton(frame_empresa, text="Seleccionar Empresa",
+                                                command=self.create_widget_empresa)
+            self.button_empresa.pack(pady=(0, 10), padx=(10, 10))
+        else:
+            empresa = self.empresa_service.get_empresa_storage()
+            print(empresa)
+            label_empresa = ctk.CTkLabel(frame_empresa, text="Empresa Seleccionada : " + empresa["nombre"])
+            label_empresa.pack(pady=(20, 20), padx=(20, 20))
+
         frame_username = ctk.CTkFrame(self)
         frame_username.pack(pady=(20, 20), padx=(20, 20))
 

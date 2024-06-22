@@ -1,20 +1,22 @@
 import customtkinter as ctk
 import threading
-from servicios.urbanito_service import UrbanitoService
+from servicios.empresa_service import EmpresaService
 from tkinter import StringVar
 from PIL import Image
 
 
 class Servidor(ctk.CTkFrame):
-    def __init__(self, master):
+    def __init__(self, master, empresa_service: EmpresaService):
         super().__init__(master)
-        self.urbanito_service = UrbanitoService()
 
+        self.urbanito_service = empresa_service
+        self.progress_bar = ctk.CTkProgressBar(self, width=800, height=5)
+        self.progress_bar.pack(side="top", pady=1, fill="x")
         self.initialize_ui_elements()
         self.load_empresas()
 
     def load_empresas(self):
-        self.load_empresas_thread = threading.Thread(target=self.load_empresas_thread)
+        self.load_empresas_thread = threading.Thread(target=self.load_empresas_thread, daemon=True)
         self.load_empresas_thread.start()
 
     def display_message(self, message, pady=20):
@@ -22,7 +24,7 @@ class Servidor(ctk.CTkFrame):
         label.pack(padx=20, pady=pady)
 
     def load_empresas_thread(self):
-        self.progress_bar.configure(mode="indeterminate", height=5)
+        # self.progress_bar.configure(mode="indeterminate", height=5)
         self.progress_bar.start()
 
         if self.urbanito_service.get_empresas():
@@ -37,8 +39,6 @@ class Servidor(ctk.CTkFrame):
         self.progress_bar.pack_forget()
 
     def initialize_ui_elements(self):
-        self.progress_bar = ctk.CTkProgressBar(self, width=800, height=0)
-        self.progress_bar.pack(side="top", pady=1, fill="x")
 
         self.label_buscar = ctk.CTkLabel(self, text="Buscar Empresa")
         self.label_buscar.pack(padx=20, pady=2)

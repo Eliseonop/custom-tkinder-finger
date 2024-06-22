@@ -5,7 +5,7 @@ import time
 from modelos.huellas import Huellas
 from config import CONFIG
 from utils.storage import Storage
-from servicios.urbanito_service import UrbanitoService
+from servicios.empresa_service import EmpresaService
 
 
 class Device:
@@ -15,7 +15,7 @@ class Device:
         self.zkfp2.Init()
         device_count = self.zkfp2.GetDeviceCount()
         self.storage = Storage()
-        self.urbanito_service = UrbanitoService()
+        self.urbanito_service = EmpresaService()
         self.img = None
         self.device = None
 
