@@ -13,7 +13,7 @@ from time import sleep
 
 class SubirTemplate(ctk.CTkFrame):
     def __init__(self, master):
-        super().__init__(master, fg_color="transparent")
+        super().__init__(master)
         self.pack(fill="both", expand=True)
 
         self.initialize_ui_elements()
@@ -26,23 +26,24 @@ class SubirTemplate(ctk.CTkFrame):
         self.selected_empleado = None
 
         self.frame_action = None
-        self.scroll_height = 250
+        self.scroll_height = 550
         self.load_empleados()
 
     def initialize_ui_elements(self):
         self.progress_bar = ctk.CTkProgressBar(self, width=800, height=5)
         self.progress_bar.pack(side="top", pady=2, fill="x")
 
-        self.label_buscar = ctk.CTkLabel(self, text="Buscar Empleado")
-        self.label_buscar.pack(padx=20, pady=2)
-
-        self.var = StringVar()
-        self.entry = ctk.CTkEntry(self, textvariable=self.var)
-        self.entry.pack(padx=20, pady=2)
-        self.entry.bind('<KeyRelease>', self.check_autocomplete)
+        # self.label_buscar = ctk.CTkLabel(self, text="Buscar Empleado")
+        # self.label_buscar.pack(padx=20, pady=2)
+        #
+        # self.var = StringVar()
+        # self.entry = ctk.CTkEntry(self, textvariable=self.var)
+        # self.entry.pack(padx=20, pady=2)
+        # self.entry.bind('<KeyRelease>', self.check_autocomplete)
 
         self.image_label = None
         self.fingerprint_message_label = None
+        self.frame_title_finger = None
 
     def initialize_fingerprint_device(self):
         self.zkfp2 = ZKFP2()
@@ -80,8 +81,23 @@ class SubirTemplate(ctk.CTkFrame):
         self.progress_bar.pack_forget()
 
     def initialize_main_template(self):
-        self.scrollable_frame = ctk.CTkScrollableFrame(self, width=600, height=self.scroll_height)
-        self.scrollable_frame.pack(padx=20, pady=10)
+
+        self.frame_general_table = ctk.CTkFrame(self, fg_color="transparent")
+        self.frame_general_table.pack(pady=20)
+
+        self.frame_search = ctk.CTkFrame(self.frame_general_table)
+        self.frame_search.pack(pady=20, padx=20)
+
+        self.label_buscar = ctk.CTkLabel(self.frame_search, text="Buscar Empleado")
+        self.label_buscar.pack(padx=20, pady=2)
+
+        self.var = StringVar()
+        self.entry = ctk.CTkEntry(self.frame_search, textvariable=self.var)
+        self.entry.pack(padx=20, pady=10)
+        self.entry.bind('<KeyRelease>', self.check_autocomplete)
+
+        self.scrollable_frame = ctk.CTkScrollableFrame(self.frame_general_table, width=600, height=self.scroll_height)
+        self.scrollable_frame.pack(padx=20, pady=5)
 
         self.create_employee_table()
 
@@ -120,6 +136,13 @@ class SubirTemplate(ctk.CTkFrame):
     def capture_fingerprint(self, empleado=None):
         print("Capturando huella")
         print(self.selected_empleado)
+        print(threading.active_count())
+
+        # cancelar el hilo de captura de huella
+        if self.frame_general_table:
+            self.frame_general_table.pack_forget()
+
+            self.whileValue = False
 
         if self.frame_action is not None:
             self.frame_action.pack_forget()
@@ -127,20 +150,13 @@ class SubirTemplate(ctk.CTkFrame):
         if empleado:
             self.selected_empleado = empleado
 
-        self.show_fingerprint_message(
-            f"Por favor, coloque su dedo en el lector de huellas, {self.selected_empleado['nombre']}.")
-
-        templates, imgs = self.acquire_fingerprint_data()
-        if templates and imgs:
-            self.selected_template = b64encode(bytes(templates[0])).decode()
-            self.write_img(imgs[0])
-            self.initialize_finger_template()
-
-        self.hide_fingerprint_message()
+        self.show_fingerprint_message()
+        threading.Thread(target=self.thread_capture_fingerprint).start()
 
     def cancelar(self):
         self.selected_empleado = None
         self.selected_template = None
+        self.whileValue = False
         if self.image_label:
             self.image_label.pack_forget()
             self.image_label = None
@@ -148,31 +164,53 @@ class SubirTemplate(ctk.CTkFrame):
             self.frame_action.pack_forget()
             self.frame_action = None
         self.hide_fingerprint_message()
+        self.show_table()
+
+    def thread_capture_fingerprint(self):
+        templates, imgs = self.acquire_fingerprint_data()
+        if templates and imgs:
+            self.selected_template = b64encode(bytes(templates[0])).decode()
+            self.write_img(imgs[0])
+            self.initialize_finger_template()
 
     def acquire_fingerprint_data(self):
         templates, imgs = [], []
-        while True:
+
+        self.whileValue = True
+
+        while self.whileValue:
             capture = self.zkfp2.AcquireFingerprint()
             if capture:
                 print('Huella dactilar capturada')
                 templates.append(capture[0])
                 imgs.append(capture[1])
+                self.whileValue = False
                 break
         return templates, imgs
 
-    def show_fingerprint_message(self, message):
+    def show_fingerprint_message(self):
+
+        if not self.frame_title_finger:
+            self.frame_title_finger = ctk.CTkFrame(self)
+            self.frame_title_finger.pack(pady=20)
+            title = f"Registrar huella de {self.selected_empleado['nombre']}"
+            self.label_title_finger = ctk.CTkLabel(self.frame_title_finger, text=title, font=("Arial", 17, "bold"))
+            self.label_title_finger.pack(pady=10, padx=10)
+
         if self.image_label:
             self.image_label.pack_forget()
         if not self.fingerprint_message_label:
-            self.fingerprint_message_label = ctk.CTkLabel(self, text=message, font=("Arial", 12, "bold"))
-        else:
-            self.fingerprint_message_label.configure(text=message)
+            self.fingerprint_message_label = ctk.CTkLabel(self, text=" ¡ Por favor coloque su dedo en el lector ... !",
+                                                          font=("Arial", 12, "bold"))
+
         self.fingerprint_message_label.pack(pady=10, padx=10 * 2)
         self.update()
 
     def hide_fingerprint_message(self):
         if self.fingerprint_message_label:
             self.fingerprint_message_label.pack_forget()
+        if self.frame_title_finger:
+            self.frame_title_finger.pack_forget()
 
     def write_img(self, img):
         my_img = self.zkfp2.Blob2Base64String(img)
@@ -209,7 +247,7 @@ class SubirTemplate(ctk.CTkFrame):
         }
 
         print("Enviando datos:", datos)
-        threading.Thread(target=self.finger_service.push_finger, args=(datos,)).start()
+        # threading.Thread(target=self.finger_service.push_finger, args=(datos,)).start()
 
     def eliminar_huella(self, empleado_id):
         print(f"Eliminando huella del empleado con ID: {empleado_id}")
@@ -219,3 +257,7 @@ class SubirTemplate(ctk.CTkFrame):
         typed = self.var.get().lower()
         self.filtered_empleados = [empleado for empleado in self.lista_empleados if typed in empleado['nombre'].lower()]
         self.create_employee_table()
+
+    def show_table(self):
+        if self.frame_general_table:
+            self.frame_general_table.pack(padx=20, pady=10)

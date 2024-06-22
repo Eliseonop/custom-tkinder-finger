@@ -4,55 +4,103 @@ from vistas.subirtemplate import SubirTemplate
 from vistas.servidor import Servidor
 from vistas.dispositivo import Dispositivo
 from utils.sidebar import Sidebar
-from utils.body import Body
+# from utils.body import Body
 from servicios.auth import Auth
+from vistas.menu import Menu
+from PIL import Image
 
 
 class VistaPrincipal(ctk.CTkFrame):
     def __init__(self, master, auth: Auth, logout):
         super().__init__(master)
-        # self.geometry("1024x640")
-        # self.resizable(False, False)
-        # self.title("Tcontur Asistencia")
+
         self.logout = logout
         self.master = master
         self.auth = auth
-        self.create_sidebar()
-        self.create_body()
 
-        # self.controlador = ControladorPrincipal()
-        self.on_page(SubirTemplate)
+        self.buttons = [
+            {"name": "Registrar", "vista": SubirTemplate, "icon": "user_add.png"},
+            {"name": "Servidor", "vista": Servidor},  # Ajusta el nombre y la vista según tus necesidades
+            # {"name": "Dispositivo", "vista": Dispositivo}
+        ]
 
-    def salir(self):
-        self.logout()
+        self.create_main()
+        self.view_menu()
+
+        # self.on_page(SubirTemplate)
+
+    def create_main(self):
+        subframe = ctk.CTkFrame(self)
+        subframe.configure(height=50)
+
+        subframe.pack(fill="x", side="top")
+
+        self.logo_image = ctk.CTkImage(Image.open("logo.png"), size=(50, 50))
+        self.logo_label = ctk.CTkLabel(subframe, image=self.logo_image, text="",
+                                       font=ctk.CTkFont(size=20, weight="bold"), compound="left")
+        self.logo_label.pack(side="left", padx=20, pady=(20, 10), anchor="center")
+
+        self.label_title = ctk.CTkLabel(subframe, text="Tcontur Asistencia", font=ctk.CTkFont(size=22, weight="bold"))
+        self.label_title.pack(side="left", padx=20, pady=(20, 10), anchor="center")
+
+        self.boton_autenticar = ctk.CTkButton(subframe, text="Cerrar sesión", command=self.logout)
+
+        self.boton_autenticar.pack(side="right", padx=20, pady=(20, 10))
+
+        self.main = ctk.CTkFrame(self)
+        self.main.pack(fill="both", expand=True)
+
+    def view_menu(self):
+        self.delete_pages()
+        self.container = ctk.CTkFrame(self.main, )
+        self.container.pack(expand=True, fill="both")
+
+        for i in range(2):
+            self.container.grid_columnconfigure(i, weight=1)
+            self.container.grid_rowconfigure(i, weight=1)
+
+        # Crear y colocar los botones a partir de la lista
+        for index, button_info in enumerate(self.buttons):
+            name = button_info["name"]
+            vista = button_info["vista"]
+            row = index // 2
+            col = index % 2
+            button = ctk.CTkButton(self.container, text=name, command=lambda v=vista: self.on_page(v))
+            button.grid(row=row, column=col, padx=10, pady=10)
+
+        # def salir(self):
+        #     self.logout()
 
     def on_page(self, page):
         self.delete_pages()
-        new_page = page(self.body)
+        self.button_back = ctk.CTkButton(self.main, text="Volver", command=self.view_menu)
+        self.button_back.pack(padx=20, pady=20, side="bottom", anchor="e")
 
-        new_page.pack(fill="both", expand=True)
+        new_page = page(self.main)
+
+        new_page.pack(fill="both", expand=True, )
 
         new_page.tkraise()
 
     def delete_pages(self):
-        for widget in self.body.winfo_children():
+        for widget in self.main.winfo_children():
             widget.pack_forget()  # Quitamos todos los widgets del body
 
-    def create_sidebar(self):
-        button_info_list = [
-            {"name": "Registrar", "vista": SubirTemplate},
-            {"name": "Servidor", "vista": Servidor},  # Ajusta el nombre y la vista según tus necesidades
-            {"name": "Dispositivo", "vista": Dispositivo}
-        ]
+    # def create_sidebar(self):
+    #     button_info_list = [
+    #         {"name": "Registrar", "vista": SubirTemplate},
+    #         {"name": "Servidor", "vista": Servidor},  # Ajusta el nombre y la vista según tus necesidades
+    #         # {"name": "Dispositivo", "vista": Dispositivo}
+    #     ]
+    #
+    #     self.sidebar = Sidebar(self, self.change_appearance_mode_event,
+    #                            self.change_scaling_event,
+    #                            self.on_page, button_info_list, self.salir)
+    #     self.sidebar.pack(side="left", fill="y", )  # Llenar verticalmente el sidebar
 
-        self.sidebar = Sidebar(self, self.change_appearance_mode_event,
-                               self.change_scaling_event,
-                               self.on_page, button_info_list, self.salir)
-        self.sidebar.pack(side="left", fill="y", )  # Llenar verticalmente el sidebar
-
-    def create_body(self):
-        self.body = Body(self)
-        self.body.pack(fill="both", expand=True)  # Para que el body se expanda y ocupe todo el espacio disponible
+    # def create_body(self):
+    #     self.body = Body(self)
+    #     self.body.pack(fill="both", expand=True)  # Para que el body se expanda y ocupe todo el espacio disponible
 
     def change_appearance_mode_event(self, new_appearance_mode: str):
         ctk.set_appearance_mode(new_appearance_mode)

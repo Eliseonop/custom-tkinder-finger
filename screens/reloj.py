@@ -98,7 +98,16 @@ class Reloj(ctk.CTkFrame):
         self.label_hora = ctk.CTkLabel(self, text="", font=("Helvetica", 120), anchor='center')
         self.label_hora.pack(padx=20, pady=20, fill="both", expand=True)
 
-        boton_configuracion = ctk.CTkButton(self, text="Configuración", command=self.ir_a_configuracion)
+        new_image = ctk.CTkImage(Image.open("fabricacion.png"), size=(30, 30),
+                                 )
+
+        boton_configuracion = ctk.CTkButton(self, text="", command=self.ir_a_configuracion,
+                                            width=10, height=30,
+                                            corner_radius=90,
+                                            fg_color="transparent", bg_color="transparent",
+                                            border_spacing=10,
+                                            image=new_image)
+        boton_configuracion.bind("<Enter>", lambda e: print("Mouse sobre el botón"))
         boton_configuracion.pack(padx=20, pady=20, side="bottom", anchor="e")
         self.progress_bar = ctk.CTkProgressBar(self, width=400, height=5)
         self.progress_bar.pack(side="bottom", pady=60)
@@ -212,7 +221,7 @@ class Reloj(ctk.CTkFrame):
 
                 hora = datetime.now().strftime('%H:%M:%S')
                 self.update_result("green",
-                                   f"Usuario identificado: Score = {match} y empleado   {entry['empleado_name']} con ID = {entry['empleado']} - Hora: {hora}")
+                                   f"Usuario identificado: {entry['empleado_name']} ")
                 break
             else:
                 self.update_result("red", f"Usuario no identificado: Score = {match}")

@@ -11,7 +11,7 @@ class Sidebar(ctk.CTkFrame):
     def __init__(self, master, appearance_callback, scaling_callback, on_page_callback, button_info_list,
                  salir_callback):
         super().__init__(master, width=220, corner_radius=0)
-        self.grid_rowconfigure(7, weight=1)
+        self.grid_rowconfigure(6, weight=1)
         self.master = master
         self.salir_callback = salir_callback
         self.auth = Auth()
