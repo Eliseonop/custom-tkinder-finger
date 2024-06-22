@@ -3,15 +3,21 @@ import requests
 import json
 from servicios.empresa_service import EmpresaService
 
+
 class Auth:
     def __init__(self):
-        self.base_url = CONFIG.BASE_URL_PLANILLA
-
+        self.base_url = CONFIG.API_URL_GENERAL
+        self.empresa_service = EmpresaService()
         self.token = None
         self.user = None
 
     def sign_in(self, username, password):
-        response = requests.post(f"{self.base_url}/login", json={'username': username, 'password': password})
+        if not self.empresa_service.get_empresa_storage():
+            return
+        empresa = self.empresa_service.get_empresa_storage()
+        url = f"https://{empresa['codigo'] + self.base_url}"
+        response = requests.post(f"{url}/login",
+                                 json={'username': username, 'password': password})
         if response.status_code == 200:
             data = response.json()
             self.token = data['token']

@@ -88,7 +88,7 @@ class VistaPrincipal(ctk.CTkFrame):
         self.button_back = ctk.CTkButton(self.main, text="Volver", command=self.view_menu)
         self.button_back.pack(padx=20, pady=20, side="bottom", anchor="e")
 
-        new_page = page(self.main)
+        new_page = page(self.main, self.auth)
 
         new_page.pack(fill="both", expand=True, )
 

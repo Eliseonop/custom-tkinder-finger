@@ -12,13 +12,13 @@ from time import sleep
 
 
 class SubirTemplate(ctk.CTkScrollableFrame):
-    def __init__(self, master):
+    def __init__(self, master, auth: Auth):
         super().__init__(master)
         self.pack(fill="both", expand=True)
 
         self.initialize_ui_elements()
         self.initialize_fingerprint_device()
-        self.initialize_services()
+        self.initialize_services(auth)
 
         self.lista_empleados = []
         self.filtered_empleados = []
@@ -56,8 +56,8 @@ class SubirTemplate(ctk.CTkScrollableFrame):
             self.device = None
             print("No se encontraron dispositivos")
 
-    def initialize_services(self):
-        auth = Auth()
+    def initialize_services(self, auth):
+        # auth = Auth()
         self.empleados_service = PlanillaService(auth)
         self.finger_service = FingerService(auth)
 
@@ -70,7 +70,9 @@ class SubirTemplate(ctk.CTkScrollableFrame):
 
         if self.empleados_service.obtener_empleados():
             # sleep(1)
+            print(self.empleados_service.empleados)
             self.lista_empleados = self.empleados_service.empleados
+
             self.filtered_empleados = self.lista_empleados
             self.initialize_main_template()
             # self.initialize_finger_template()

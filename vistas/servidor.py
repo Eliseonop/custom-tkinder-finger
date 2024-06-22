@@ -29,6 +29,15 @@ class Servidor(ctk.CTkFrame):
 
         if self.urbanito_service.get_empresas():
             self.empresas = self.urbanito_service.empresas
+
+            demo_empresa = {
+                "id": 0,
+                "codigo": "backend-planilla",
+                "nombre": "Demo Planilla"
+            }
+
+            self.empresas.insert(0, demo_empresa)
+
             self.filtered_empresas = self.empresas
             self.selected_empresa = self.urbanito_service.get_empresa_storage()
             self.initialize_main_template()

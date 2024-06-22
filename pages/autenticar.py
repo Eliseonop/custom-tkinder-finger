@@ -15,15 +15,7 @@ class Autenticar(ctk.CTkFrame):
         self.auth = auth
         self.empresa_service = EmpresaService()
         self.app = parent
-        self.progress_bar = ctk.CTkProgressBar(self, width=800, height=5)
-        self.progress_bar.configure(mode="indeterminate")
-        self.progress_bar.pack(side="top", fill="x")
-        # self.progress_bar.pack_forget()
-        # self.create_logo()
-        # self.create_widgets()
-        # self.create_scale()
-        # self.button_volver = ctk.CTkButton(self, text="Volver", command=self.app.volver_a_reloj)
-        # self.button_volver.pack(padx=20, pady=20, side="bottom", anchor="e")
+
         self.render_principal()
 
     def create_widget_empresa(self):
@@ -38,6 +30,9 @@ class Autenticar(ctk.CTkFrame):
 
     def render_principal(self):
         self.delete_pages()
+        self.progress_bar = ctk.CTkProgressBar(self, width=800, height=0)
+        self.progress_bar.configure(mode="indeterminate")
+        self.progress_bar.pack(side="top", fill="x")
         self.create_logo()
         self.create_widgets()
         self.create_scale()
@@ -57,7 +52,7 @@ class Autenticar(ctk.CTkFrame):
                                                              values=["Light", "Dark", "System"],
                                                              command=self.change_appearance_mode_event,
                                                              variable=ctk.StringVar(value="System"))
-        self.appearance_mode_optionemenu.pack(side="left", padx=20)
+        self.appearance_mode_optionemenu.pack(side="left", padx=0)
 
         self.scaling_label = ctk.CTkLabel(frame_scale, text="Escala UI :", anchor="w")
         self.scaling_label.pack(side="left", padx=20)
@@ -66,7 +61,7 @@ class Autenticar(ctk.CTkFrame):
                                                      command=self.change_scaling_event,
                                                      variable=ctk.StringVar(value="100%")
                                                      )
-        self.scaling_optionemenu.pack(side="left", padx=20)
+        self.scaling_optionemenu.pack(side="left", padx=0)
 
     def change_appearance_mode_event(self, new_appearance_mode: str):
         ctk.set_appearance_mode(new_appearance_mode)
@@ -99,12 +94,16 @@ class Autenticar(ctk.CTkFrame):
             label_empresa.pack(pady=(10, 5), padx=(10, 10))
             self.button_empresa = ctk.CTkButton(frame_empresa, text="Seleccionar Empresa",
                                                 command=self.create_widget_empresa)
-            self.button_empresa.pack(pady=(0, 10), padx=(10, 10))
+            self.button_empresa.pack(pady=(0, 10), padx=(20, 20))
         else:
             empresa = self.empresa_service.get_empresa_storage()
             print(empresa)
-            label_empresa = ctk.CTkLabel(frame_empresa, text="Empresa Seleccionada : " + empresa["nombre"])
-            label_empresa.pack(pady=(20, 20), padx=(20, 20))
+            label_empresa = ctk.CTkLabel(frame_empresa, text="Empresa:")
+            # label_empresa = ctk.CTkLabel(frame_empresa, text="Empresa Seleccionada :" + empresa["nombre"])
+            label_empresa.pack(pady=(10, 2), padx=(20, 20))
+            self.button_empresa = ctk.CTkButton(frame_empresa, text=empresa["nombre"],
+                                                command=self.create_widget_empresa)
+            self.button_empresa.pack(pady=(0, 10), padx=(20, 20))
 
         frame_username = ctk.CTkFrame(self)
         frame_username.pack(pady=(20, 20), padx=(20, 20))
@@ -114,6 +113,7 @@ class Autenticar(ctk.CTkFrame):
 
         self.entry_username = ctk.CTkEntry(frame_username)
         self.entry_username.pack(pady=(5, 10), padx=(20, 20))
+        self.entry_username.bind("<KeyRelease>", self.check_fields)
 
         frame_password = ctk.CTkFrame(self)
         frame_password.pack(pady=(10, 10), padx=(20, 20))
@@ -123,9 +123,22 @@ class Autenticar(ctk.CTkFrame):
 
         self.entry_password = ctk.CTkEntry(frame_password, show="*")
         self.entry_password.pack(pady=(5, 10), padx=(20, 20))
+        self.entry_password.bind("<KeyRelease>", self.check_fields)
 
-        self.button_login = ctk.CTkButton(self, text="Ingresar", command=self.start_login_thread)
+        self.button_login = ctk.CTkButton(self, text="Ingresar", command=self.start_login_thread, state="disabled")
         self.button_login.pack(pady=(20, 10))
+
+        self.check_fields()  # Inicializa el estado del botón
+
+    def check_fields(self, event=None):
+        empresa = self.empresa_service.get_empresa_storage()
+        username = self.entry_username.get().strip()
+        password = self.entry_password.get().strip()
+
+        if empresa and username and password:
+            self.button_login.configure(state="normal")
+        else:
+            self.button_login.configure(state="disabled")
 
     def start_login_thread(self):
         # Inicia un nuevo hilo para el proceso de login

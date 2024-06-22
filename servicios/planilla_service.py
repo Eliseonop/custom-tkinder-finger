@@ -11,7 +11,8 @@ class PlanillaService:
 
     def obtener_empleados(self):
         url = f"{self.base_url}/api/empleados"
-        token = self.auth.get_access_token()
+        token = self.auth.token
+        print(token)
         headers = {
             'Authorization': f'Token {token}'
         }
