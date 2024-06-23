@@ -2,6 +2,7 @@ from config import CONFIG
 import requests
 import json
 from servicios.empresa_service import EmpresaService
+from utils.storage import Storage
 
 
 class Auth:
@@ -10,6 +11,7 @@ class Auth:
         self.empresa_service = EmpresaService()
         self.token = None
         self.user = None
+        self.storage = Storage()
 
     def sign_in(self, username, password):
         if not self.empresa_service.get_empresa_storage():
@@ -22,9 +24,14 @@ class Auth:
             data = response.json()
             self.token = data['token']
             self.user = data['user']
+
+            self.storage.save('token', self.token)
             return True
         else:
             return False
+
+    def obtener_token(self):
+        return self.storage.load('token')
 
     def sign_out(self):
         self.token = None

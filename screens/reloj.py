@@ -10,17 +10,20 @@ import locale
 from screens.configuracion import Configuracion
 from screens.auth_window import AuthWindow
 from servicios.marcaciones_service import MarcacionesService
+from servicios.auth import Auth
 
 # Establecer la configuración regional en español
 locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+from servicios.planilla_service import PlanillaService
 
 
 class Reloj(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master, corner_radius=0, fg_color="transparent")
         self.pack(fill="both", expand=True)
-
+        self.auth = Auth()
         self.device = Device()
+        self.planilla_service = PlanillaService(self.auth)
         # self.marcaciones_service = MarcacionesService()
         self.huellas_capturadas = False
         self.procesar_huella = True
@@ -145,11 +148,12 @@ class Reloj(ctk.CTkFrame):
             time.sleep(1)
 
     def load_huellas(self):
+
         self.progress_bar.configure(mode="indeterminate")
         self.progress_bar.start()
         try:
             print("Cargando huellas")
-            carga = self.device.cargar_huellas()
+            carga = self.planilla_service.obtener_huellas()
             print("Huellas cargadas")
             self.progress_bar.stop()
             print("Deteniendo progress bar")
@@ -157,7 +161,7 @@ class Reloj(ctk.CTkFrame):
 
             if carga:
                 print("Huellas cargadas --- inciando auth")
-                threading.Thread(target=self.auth).start()
+                threading.Thread(target=self.hacer_marcacion()).start()
             else:
                 self.label_result = ctk.CTkLabel(self, text="No se han podido cargar las huellas")
                 self.label_result.pack(padx=20, pady=20)
@@ -170,7 +174,7 @@ class Reloj(ctk.CTkFrame):
     def go_to_autenticar(self):
         self.master.on_page(AuthWindow)
 
-    def auth(self):
+    def hacer_marcacion(self):
         while self.is_active:
             print("Esperando huella...")
             self.reset_ui()
@@ -209,19 +213,19 @@ class Reloj(ctk.CTkFrame):
 
         tmp, img = capture
         my_img = self.device.zkfp2.Blob2Base64String(img)
-        decoded_temps = [b64decode(entry["template"]) for entry in self.device.listemp]
+        decoded_temps = [b64decode(entry["huella"]) for entry in self.planilla_service.huellas]
         datos_de_imagen = b64decode(my_img)
         imagen_bytes = BytesIO(datos_de_imagen)
         self.open_imagen = Image.open(imagen_bytes)
 
-        for temp, entry in zip(decoded_temps, self.device.listemp):
+        for temp, entry in zip(decoded_temps, self.planilla_service.huellas):
             # self.progress_bar.step(20)
             match = self.device.zkfp2.DBMatch(tmp, temp)
             if match > 80:
 
                 hora = datetime.now().strftime('%H:%M:%S')
                 self.update_result("green",
-                                   f"Usuario identificado: {entry['empleado_name']} ")
+                                   f"Usuario identificado: {entry['nombre']} ")
                 break
             else:
                 self.update_result("red", f"Usuario no identificado: Score = {match}")

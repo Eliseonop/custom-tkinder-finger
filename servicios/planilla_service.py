@@ -10,6 +10,7 @@ class PlanillaService:
         self.base_url = CONFIG.BASE_URL_PLANILLA
         self.auth = auth
         self.empleados = []
+        self.huellas = []
 
     def obtener_empleados(self):
         url = f"{self.base_url}/api/empleados"
@@ -27,6 +28,22 @@ class PlanillaService:
             print(f"Error al obtener los empleados: {e}")
             return False
 
+    def obtener_huellas(self):
+        url = f"{self.base_url}/api/empleados/ver_huellas"
+        token = self.auth.obtener_token()
+        headers = {
+            'Authorization': f'Token {token}'
+        }
+        try:
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+            self.huellas = response.json()
+            print(self.huellas)
+            return True
+        except requests.exceptions.RequestException as e:
+            print(f"Error al obtener las huellas: {e}")
+            return False
+
     def upload_huella(self, empleado_id, huella):
         url = f"{self.base_url}/api/empleados/{empleado_id}/guardar_huella"
         token = self.auth.token
@@ -37,7 +54,7 @@ class PlanillaService:
             'huella': huella
         }
         try:
-            response = requests.post(url, headers=headers, json=data)
+            response = requests.put(url, headers=headers, json=data)
             print(response.json())
             response.raise_for_status()
             return True

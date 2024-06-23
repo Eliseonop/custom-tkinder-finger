@@ -3,7 +3,6 @@ from tkinter import messagebox
 from servicios.auth import Auth
 from PIL import Image
 import threading
-from screens.auth_window import AuthWindow
 from servicios.empresa_service import EmpresaService
 from vistas.servidor import Servidor
 
