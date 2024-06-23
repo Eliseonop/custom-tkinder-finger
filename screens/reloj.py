@@ -60,7 +60,7 @@ class Reloj(ctk.CTkFrame):
             print("\nNo se encontraron hilos duplicados.")
 
     def destroy(self):
-        # self.destroy_threads()
+        self.is_active = False
 
         super().destroy()
 
@@ -116,8 +116,8 @@ class Reloj(ctk.CTkFrame):
         self.label_result = None
 
     def ir_a_configuracion(self):
-        # self.is_active = False
-        self.destroy_threads()
+        self.is_active = False
+        self.destroy()
         self.master.on_page(Configuracion)
         # self.destroy()
 

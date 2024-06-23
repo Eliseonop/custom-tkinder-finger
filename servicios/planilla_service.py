@@ -1,6 +1,8 @@
 from config import CONFIG
 import requests
 from servicios.auth import Auth
+from tkinter import messagebox
+from CTkMessagebox import CTkMessagebox
 
 
 class PlanillaService:
@@ -40,5 +42,14 @@ class PlanillaService:
             response.raise_for_status()
             return True
         except requests.exceptions.RequestException as e:
+            details = e.response.json()
+            # print('json')
+            print(details)
+            # messagebox.showerror("Error", )
+
+            CTkMessagebox(title="Error al subir la huella!", message=details['detail']['message'],
+                          icon="warning", option_1="Cancelar")
+            # messagebox.showerror("Error", "Error al subir la huella")
+
             print(f"Error al subir la huella: {e}")
             return False

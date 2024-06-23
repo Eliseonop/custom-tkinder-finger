@@ -2,11 +2,11 @@ import customtkinter as ctk
 from controladores.device import Device
 from vistas.subirtemplate import SubirTemplate
 from vistas.servidor import Servidor
-from vistas.dispositivo import Dispositivo
-from utils.sidebar import Sidebar
+# from vistas.dispositivo import Dispositivo
+# from utils.sidebar import Sidebar
 # from utils.body import Body
 from servicios.auth import Auth
-from vistas.menu import Menu
+
 from PIL import Image
 
 

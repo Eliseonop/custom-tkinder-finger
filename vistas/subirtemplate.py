@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from tkinter import StringVar
+from tkinter import StringVar, messagebox
 from servicios.planilla_service import PlanillaService
 from servicios.auth import Auth
 import threading
@@ -64,7 +64,7 @@ class SubirTemplate(ctk.CTkScrollableFrame):
 
     def initialize_services(self, auth):
         # auth = Auth()
-        self.empleados_service = PlanillaService(auth)
+        self.planilla_service = PlanillaService(auth)
         self.finger_service = FingerService(auth)
 
     def load_empleados(self):
@@ -74,10 +74,10 @@ class SubirTemplate(ctk.CTkScrollableFrame):
         self.progress_bar.configure(mode="indeterminate")
         self.progress_bar.start()
 
-        if self.empleados_service.obtener_empleados():
+        if self.planilla_service.obtener_empleados():
             # sleep(1)
-            print(self.empleados_service.empleados)
-            self.lista_empleados = self.empleados_service.empleados
+            print(self.planilla_service.empleados)
+            self.lista_empleados = self.planilla_service.empleados
 
             self.filtered_empleados = self.lista_empleados
             self.initialize_main_template()
@@ -133,9 +133,6 @@ class SubirTemplate(ctk.CTkScrollableFrame):
         self.capture_button = ctk.CTkButton(self.frame_action, text="Reintentar", command=self.capture_fingerprint)
         self.capture_button.pack(padx=20, pady=20, side="left")
 
-        self.cancel_button = ctk.CTkButton(self.frame_action, text="Cancelar", command=self.cancelar)
-        self.cancel_button.pack(padx=20, pady=20, side="left")
-
         self.submit_button = ctk.CTkButton(self.frame_action, text="Registrar", command=self.submit_form,
                                            fg_color="indigo")
         self.submit_button.pack(padx=20, pady=20, side="left")
@@ -157,6 +154,7 @@ class SubirTemplate(ctk.CTkScrollableFrame):
         if empleado:
             self.selected_empleado = empleado
 
+        print(self.selected_empleado)
         self.show_fingerprint_message()
         self.thread_fing = threading.Thread(target=self.thread_capture_fingerprint).start()
 
@@ -206,11 +204,17 @@ class SubirTemplate(ctk.CTkScrollableFrame):
             self.label_title_finger = ctk.CTkLabel(self.frame_title_finger, text=title, font=("Arial", 17, "bold"))
             self.label_title_finger.pack(pady=10, padx=10)
 
+        if not self.frame_action:
+            self.frame_action = ctk.CTkFrame(self)
+            self.frame_action.pack(pady=10)
+        self.cancel_button = ctk.CTkButton(self.frame_action, text="Cancelar", command=self.cancelar, fg_color="red")
+        self.cancel_button.pack(padx=20, pady=20, side="left")
+
         if self.image_label:
             self.image_label.pack_forget()
         if not self.fingerprint_message_label:
             self.fingerprint_message_label = ctk.CTkLabel(self, text=" ¡ Por favor coloque su dedo en el lector ... !",
-                                                          font=("Arial", 12, "bold"))
+                                                          font=("Arial", 18, "bold"))
 
         self.fingerprint_message_label.pack(pady=10, padx=10 * 2)
         self.update()
@@ -252,11 +256,41 @@ class SubirTemplate(ctk.CTkScrollableFrame):
         datos = {
             "empleado": self.selected_empleado['id'],
             "empleado_name": self.selected_empleado['nombre'],
-            "template": self.selected_template
+            "huella": self.selected_template
         }
 
-        print("Enviando datos:", datos)
-        # threading.Thread(target=self.finger_service.push_finger, args=(datos,)).start()
+        # self.upload_finger(self.selected_empleado['id'], self.selected_template)
+
+        threading.Thread(target=self.upload_finger, args=(self.selected_empleado['id'], self.selected_template)).start()
+
+    def upload_finger(self, empleado, huella):
+        # print("Enviando datos:", datos)
+        self.progress_bar.configure(mode="determinate")
+        self.progress_bar.start()
+        self.progress_bar.pack(side="top", pady=2)
+
+        try:
+            response = self.planilla_service.upload_huella(empleado, huella)
+
+            if response:
+                self.progress_bar.stop()
+                self.progress_bar.pack_forget()
+                self.display_message("Huella subida correctamente")
+                self.cancelar()
+            else:
+                # self.display_message("Error al subir la huella")
+
+                self.progress_bar.stop()
+                self.progress_bar.pack_forget()
+
+        except Exception as e:
+            print(f"Error al subir la huella: {e}")
+            self.progress_bar.stop()
+            self.progress_bar.pack_forget()
+            # self.display_message("Error al subir la huella")
+            # self.cancelar()
+
+        # self.finger_service.push_finger(datos)
 
     def eliminar_huella(self, empleado_id):
         print(f"Eliminando huella del empleado con ID: {empleado_id}")
