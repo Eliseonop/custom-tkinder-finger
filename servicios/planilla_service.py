@@ -12,6 +12,25 @@ class PlanillaService:
         self.empleados = []
         self.huellas = []
 
+    def post_marcacion(self, empleado_id, tipo_marcacion):
+        url = f"{self.base_url}/api/marcaciones"
+        token = self.auth.obtener_token()
+        headers = {
+            'Authorization': f'Token {token}'
+        }
+        data = {
+            'empleado': empleado_id,
+            'hora': tipo_marcacion
+        }
+        try:
+            response = requests.post(url, headers=headers, json=data)
+            response.raise_for_status()
+            print(data)
+            return True
+        except requests.exceptions.RequestException as e:
+            print(f"Error al guardar la marcación: {e}")
+            return False
+
     def obtener_empleados(self):
         url = f"{self.base_url}/api/empleados"
         token = self.auth.token

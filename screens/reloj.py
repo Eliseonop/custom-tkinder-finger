@@ -11,6 +11,7 @@ from screens.configuracion import Configuracion
 from screens.auth_window import AuthWindow
 from servicios.marcaciones_service import MarcacionesService
 from servicios.auth import Auth
+from datetime import datetime
 
 # Establecer la configuración regional en español
 locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
@@ -185,6 +186,7 @@ class Reloj(ctk.CTkFrame):
                     capture = self.device.zkfp2.AcquireFingerprint()
                     if capture:
                         print("Huella capturada")
+
                         self.process_fingerprint(capture)
                         # self.schedule_next_capture()
                         time.sleep(4)
@@ -221,11 +223,18 @@ class Reloj(ctk.CTkFrame):
         for temp, entry in zip(decoded_temps, self.planilla_service.huellas):
             # self.progress_bar.step(20)
             match = self.device.zkfp2.DBMatch(tmp, temp)
-            if match > 80:
+            if match > 70:
+                # threading.Thread(target=self.planilla_service.post_marcacion, args=(entry["id"], datetime.now().astimezone().isoformat())).start()
 
+                result = self.planilla_service.post_marcacion(entry["id"], datetime.now().astimezone().isoformat())
                 hora = datetime.now().strftime('%H:%M:%S')
-                self.update_result("green",
-                                   f"Usuario identificado: {entry['nombre']} ")
+                if result:
+                    self.update_result("green",
+                                       f"Usuario identificado: {entry['nombre']} - {hora}")
+                else:
+                    self.update_result("red", f"Usuario no identificado: Score = {match}")
+                # self.update_result("green",
+                #                    f"Usuario identificado: {entry['nombre']} ")
                 break
             else:
                 self.update_result("red", f"Usuario no identificado: Score = {match}")
@@ -234,6 +243,12 @@ class Reloj(ctk.CTkFrame):
         imagen_ctk = ctk.CTkImage(light_image=self.filter_image, dark_image=self.filter_image, size=(200, 250))
         self.image_label = ctk.CTkLabel(self, image=imagen_ctk, text="", width=200, height=200)
         self.image_label.pack(padx=10, pady=10)
+
+    def make_marcaje(self):
+        try:
+            self.planilla_service.marcar_asistencia()
+        except Exception as e:
+            print(f"Error al marcar asistencia: {e}")
 
     def update_result(self, color, text):
         if color == "green":
