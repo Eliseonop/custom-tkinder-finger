@@ -1,6 +1,7 @@
-import json
+import logging
 from tkinter import messagebox
 import customtkinter as ctk
+from CTkMessagebox import CTkMessagebox
 
 
 class LogWindow(ctk.CTkToplevel):
@@ -8,23 +9,40 @@ class LogWindow(ctk.CTkToplevel):
         super().__init__(master)
         self.geometry("600x600")
         self.title("Registro de Eventos")
-        self.frame = ctk.CTkFrame(self)
-        self.frame.grid_columnconfigure(0, weight=1)
-        self.frame.grid_rowconfigure(1, weight=1)
+
+        self.frame_scroll = ctk.CTkScrollableFrame(self)
+        self.frame_scroll.pack(fill="both", expand=True)
+
+        self.frame = ctk.CTkFrame(self.frame_scroll)
+
+        self.frame.grid_columnconfigure(1, weight=1)
+        self.frame.grid_columnconfigure(2, weight=1)
+        self.frame.grid_columnconfigure(3, weight=1)
+
         self.frame.pack(fill="both", expand=True)
         self.load_logs()
 
     def load_logs(self):
         try:
-            with open("log.json", "r") as file:
-                logs = file.readlines()
-                logs_data = [json.loads(log.strip()) for log in logs]
+            with open("app.log", "r") as file:
+                logs_data = file.readlines()
 
                 for index, log in enumerate(logs_data):
-                    hora_label = ctk.CTkLabel(self.frame, text=log['hora'])
-                    hora_label.grid(row=index, column=0, sticky="w", padx=10)
+                    log_parts = log.split(' - ')
+                    print(log_parts)
+                    if len(log_parts) == 3:  # Asegurar que el log tenga el formato esperado
+                        hora_label = ctk.CTkLabel(self.frame, text=log_parts[0])
+                        hora_label.grid(row=index, column=0, sticky="w", padx=10)
 
-                    data_label = ctk.CTkLabel(self.frame, text=log['data'])
-                    data_label.grid(row=index, column=1, sticky="e", padx=10)
+                        data_label = ctk.CTkLabel(self.frame, text=log_parts[1])
+                        data_label.grid(row=index, column=1, sticky="e", padx=10)
+
+                        message_label = ctk.CTkLabel(self.frame, text=log_parts[2])
+                        message_label.grid(row=index, column=2, sticky="e", padx=10)
+
         except Exception as e:
-            messagebox.showerror("Error", f"Error al cargar los logs: {e}")
+            CTkMessagebox(
+                title="Error",
+                message=f"Error al cargar los logs: {e}",
+                icon="warning",
+            )

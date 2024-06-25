@@ -6,6 +6,7 @@ import threading
 from servicios.empresa_service import EmpresaService
 from vistas.servidor import Servidor
 from utils.storage import Storage
+from screens.log_win import LogWindow
 
 
 class Autenticar(ctk.CTkFrame):
@@ -16,6 +17,7 @@ class Autenticar(ctk.CTkFrame):
         self.empresa_service = EmpresaService()
         self.app = parent
         self.storage = Storage()
+        self.toplevel_window = None
 
         self.render_principal()
 
@@ -66,6 +68,14 @@ class Autenticar(ctk.CTkFrame):
                                                      variable=ctk.StringVar(value=value_scaling)
                                                      )
         self.scaling_optionemenu.pack(side="left", padx=0)
+        self.button_1 = ctk.CTkButton(frame_scale, text="open logs", command=self.open_toplevel)
+        self.button_1.pack(side="left", padx=20, pady=20)
+
+    def open_toplevel(self):
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window = LogWindow(self)  # create window if its None or destroyed
+        else:
+            self.toplevel_window.focus()  # if window exists focus it
 
     def change_appearance_mode_event(self, new_appearance_mode: str):
         self.storage.save("appearance_mode", new_appearance_mode)

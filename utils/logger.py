@@ -1,20 +1,24 @@
-import json
-from datetime import datetime
+import logging
 
 
 class Logger:
-    def __init__(self, file_path="log.json"):
+    def __init__(self, file_path="app.log"):
         self.file_path = file_path
+        logging.basicConfig(filename=self.file_path, level=logging.INFO,
+                            format='%(asctime)s - %(levelname)s - %(message)s')
 
-    def save_log(self, data):
-        current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        log_entry = {"hora": current_time, "data": data}
+    def save_log_info(self, data):
+        logging.info(data)
+        return True
 
+    def save_log_error(self, data):
+        logging.error(data)
+        return True
+
+    def clear_log(self):
         try:
-            with open(self.file_path, "a") as file:
-                json.dump(log_entry, file)
-                file.write("\n")
-            return True  # Éxito al guardar el log
+            open(self.file_path, 'w').close()  # Abre y cierra el archivo para borrar su contenido
+            return True
         except Exception as e:
-            print(f"Error al guardar el log: {e}")
-            return False  # Error al guardar el log
+            print(f"Error al limpiar el log: {e}")
+            return False

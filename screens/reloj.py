@@ -11,7 +11,6 @@ from screens.auth_window import AuthWindow
 from servicios.auth import Auth
 from datetime import datetime
 from servicios.planilla_service import PlanillaService
-from screens.log_win import LogWindow
 from utils.logger import Logger
 
 locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
@@ -36,15 +35,8 @@ class Reloj(ctk.CTkFrame):
 
         self.start_threads()
         self.toplevel_window = None
-        self.button_1 = ctk.CTkButton(self, text="open logs", command=self.open_toplevel)
-        self.button_1.pack(side="left", padx=20, pady=20)
-        self.logger.save_log("Iniciando aplicación")
 
-    def open_toplevel(self):
-        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-            self.toplevel_window = LogWindow(self)  # create window if its None or destroyed
-        else:
-            self.toplevel_window.focus()  # if window exists focus it
+
 
     def destroy(self):
         self.is_active = False
@@ -116,7 +108,6 @@ class Reloj(ctk.CTkFrame):
             time.sleep(1)
 
     def load_huellas(self):
-        self.logger.save_log("Cargando huellas")
         self.progress_bar.configure(mode="indeterminate")
         self.progress_bar.start()
         try:
@@ -129,7 +120,7 @@ class Reloj(ctk.CTkFrame):
 
             if carga:
                 print("Huellas cargadas --- inciando auth")
-                self.logger.save_log("Huellas cargadas")
+                self.logger.save_log_info("Huellas cargadas")
                 threading.Thread(target=self.esperar_huella()).start()
             else:
                 self.label_result = ctk.CTkLabel(self, text="No se han podido cargar las huellas")
@@ -144,7 +135,7 @@ class Reloj(ctk.CTkFrame):
         self.master.on_page(AuthWindow)
 
     def esperar_huella(self):
-        self.logger.save_log("Esperando huella")
+        self.logger.save_log_info("Esperando huella")
         while self.is_active:
             print("Esperando huella...")
             self.reset_ui()
@@ -189,36 +180,35 @@ class Reloj(ctk.CTkFrame):
         imagen_bytes = BytesIO(datos_de_imagen)
         self.open_imagen = Image.open(imagen_bytes)
         match_found = False
-        self.logger.save_log("Procesando huella")
         for temp, entry in zip(decoded_temps, self.planilla_service.huellas):
             # self.progress_bar.step(20)
             match = self.device.zkfp2.DBMatch(tmp, temp)
             if match > 70:
-                self.logger.save_log(f"Comparando huella: {entry['nombre']} - {match}")
+                self.logger.save_log_info(f"Comparando huella: {entry['nombre']} - {match}")
                 match_found = True
                 # threading.Thread(target=self.planilla_service.post_marcacion, args=(entry["id"], datetime.now().astimezone().isoformat())).start()
                 self.progress_bar = ctk.CTkProgressBar(self, width=400, height=5)
                 self.progress_bar.pack(side="top")
                 self.progress_bar.configure(mode="indeterminate")
                 self.progress_bar.start()
-                self.logger.save_log(f"Marcando asistencia: {entry['nombre']} ")
+                self.logger.save_log_info(f"Marcando asistencia: {entry['nombre']} ")
                 result = self.planilla_service.post_marcacion(entry["id"], datetime.now().astimezone().isoformat())
                 hora = datetime.now().strftime('%H:%M:%S')
                 self.progress_bar.stop()
                 self.progress_bar.pack_forget()
                 if result:
-                    self.logger.save_log(f"Asistencia marco con exito: {entry['nombre']} - {hora}")
+                    self.logger.save_log_info(f"Asistencia marco con exito: {entry['nombre']} - {hora}")
                     self.update_result("green",
                                        f"Marcando asistencia: {entry['nombre']} - {hora}")
                 else:
-                    self.logger.save_log(f"Error con el servidor: {entry['nombre']} ")
+                    self.logger.save_log_error(f"Error con el servidor: {entry['nombre']} ")
                     self.update_result("red",
                                        f"Error con el Servidor: {entry['nombre']} ")
 
                 break
 
         if not match_found:
-            self.logger.save_log("Huella no identificada")
+            self.logger.save_log_error("Huella no identificada")
             self.update_result("red", "Usuario no identificado")
         imagen_ctk = ctk.CTkImage(light_image=self.filter_image, dark_image=self.filter_image, size=(200, 250))
         self.image_label = ctk.CTkLabel(self, image=imagen_ctk, text="", width=200, height=200)
