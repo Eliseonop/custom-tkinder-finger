@@ -8,6 +8,7 @@ from vistas.servidor import Servidor
 from servicios.auth import Auth
 
 from PIL import Image
+from utils.storage import Storage
 
 
 class VistaPrincipal(ctk.CTkFrame):
@@ -17,6 +18,7 @@ class VistaPrincipal(ctk.CTkFrame):
         self.logout = logout
         self.master = master
         self.auth = auth
+        self.storage = Storage()
 
         self.buttons = [
             {"name": "Registrar", "vista": SubirTemplate, "icon": "user_add.png"},
@@ -99,25 +101,12 @@ class VistaPrincipal(ctk.CTkFrame):
             widget.destroy()
             widget.pack_forget()  # Quitamos todos los widgets del body
 
-    # def create_sidebar(self):
-    #     button_info_list = [
-    #         {"name": "Registrar", "vista": SubirTemplate},
-    #         {"name": "Servidor", "vista": Servidor},  # Ajusta el nombre y la vista según tus necesidades
-    #         # {"name": "Dispositivo", "vista": Dispositivo}
-    #     ]
+    # def change_appearance_mode_event(self, new_appearance_mode: str):
+    #     self.storage.save("appearance_mode", new_appearance_mode)
+    #     ctk.set_appearance_mode(new_appearance_mode)
     #
-    #     self.sidebar = Sidebar(self, self.change_appearance_mode_event,
-    #                            self.change_scaling_event,
-    #                            self.on_page, button_info_list, self.salir)
-    #     self.sidebar.pack(side="left", fill="y", )  # Llenar verticalmente el sidebar
-
-    # def create_body(self):
-    #     self.body = Body(self)
-    #     self.body.pack(fill="both", expand=True)  # Para que el body se expanda y ocupe todo el espacio disponible
-
-    def change_appearance_mode_event(self, new_appearance_mode: str):
-        ctk.set_appearance_mode(new_appearance_mode)
-
-    def change_scaling_event(self, new_scaling: str):
-        new_scaling_float = int(new_scaling.replace("%", "")) / 100
-        ctk.set_widget_scaling(new_scaling_float)
+    # def change_scaling_event(self, new_scaling: str):
+    #     new_scaling_float = int(new_scaling.replace("%", "")) / 100
+    #     self.storage.save("scaling", new_scaling_float)
+    #
+    #     ctk.set_widget_scaling(new_scaling_float)

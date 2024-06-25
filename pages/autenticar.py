@@ -5,6 +5,7 @@ from PIL import Image
 import threading
 from servicios.empresa_service import EmpresaService
 from vistas.servidor import Servidor
+from utils.storage import Storage
 
 
 class Autenticar(ctk.CTkFrame):
@@ -14,6 +15,7 @@ class Autenticar(ctk.CTkFrame):
         self.auth = auth
         self.empresa_service = EmpresaService()
         self.app = parent
+        self.storage = Storage()
 
         self.render_principal()
 
@@ -43,6 +45,9 @@ class Autenticar(ctk.CTkFrame):
             widget.pack_forget()
 
     def create_scale(self):
+        value_appearance_mode = self.storage.load("appearance_mode", "System")
+        value_scaling = self.storage.load("scaling", 1.0)
+
         frame_scale = ctk.CTkFrame(self)
         frame_scale.pack(pady=(20, 20), padx=(20, 20), side="bottom", anchor="w")
         self.appearance_mode_label = ctk.CTkLabel(frame_scale, text="Tema:", anchor="w")
@@ -50,7 +55,7 @@ class Autenticar(ctk.CTkFrame):
         self.appearance_mode_optionemenu = ctk.CTkOptionMenu(frame_scale,
                                                              values=["Light", "Dark", "System"],
                                                              command=self.change_appearance_mode_event,
-                                                             variable=ctk.StringVar(value="System"))
+                                                             variable=ctk.StringVar(value=value_appearance_mode))
         self.appearance_mode_optionemenu.pack(side="left", padx=0)
 
         self.scaling_label = ctk.CTkLabel(frame_scale, text="Escala UI :", anchor="w")
@@ -58,15 +63,19 @@ class Autenticar(ctk.CTkFrame):
         self.scaling_optionemenu = ctk.CTkOptionMenu(frame_scale,
                                                      values=["80%", "90%", "100%", "110%", "120%"],
                                                      command=self.change_scaling_event,
-                                                     variable=ctk.StringVar(value="100%")
+                                                     variable=ctk.StringVar(value=value_scaling)
                                                      )
         self.scaling_optionemenu.pack(side="left", padx=0)
 
     def change_appearance_mode_event(self, new_appearance_mode: str):
+        self.storage.save("appearance_mode", new_appearance_mode)
+
         ctk.set_appearance_mode(new_appearance_mode)
 
     def change_scaling_event(self, new_scaling: str):
         new_scaling_float = int(new_scaling.replace("%", "")) / 100
+        self.storage.save("scaling", new_scaling_float)
+
         ctk.set_widget_scaling(new_scaling_float)
 
     def volver_a_reloj(self):

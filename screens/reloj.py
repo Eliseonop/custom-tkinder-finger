@@ -31,56 +31,15 @@ class Reloj(ctk.CTkFrame):
         self.initialize_ui_elements()
 
         self.is_active = True
-        # if threading.enumerate() == 1:
-        #
 
         print(threading.active_count())
-        # for thread in threading.enumerate():
-        #     if thread is not threading.current_thread():
-        #         # thread.join()
-        #         print(f"Deteniendo hilo {thread.is_alive()} {thread}")
-        self.print_active_threads_and_check_duplicates()
-        # if threading.active_count() > 1:
+
         self.start_threads()
-
-    def print_active_threads_and_check_duplicates(self):
-        active_threads = threading.enumerate()
-        thread_names = set()
-        duplicates = []
-
-        print("Hilos activos:")
-        for thread in active_threads:
-            print(f"Nombre: {thread.name}, Identificador: {thread.ident}")
-            if thread.name in thread_names:
-                duplicates.append(thread.name)
-            else:
-                thread_names.add(thread.name)
-
-        if duplicates:
-            print("\nHilos duplicados encontrados:")
-            for name in duplicates:
-                print(name)
-        else:
-            print("\nNo se encontraron hilos duplicados.")
 
     def destroy(self):
         self.is_active = False
 
         super().destroy()
-
-    def destroy_threads(self):
-        print("Destruyendo Reloj")
-        self.is_active = False
-        for thread in threading.enumerate():
-            if thread is not threading.current_thread():
-                # thread.join()
-                print(f"Deteniendo hilo {thread.is_alive()} {thread}")
-        # super().destroy()
-        #
-        # for thread in threading.enumerate():
-        #     if thread is not threading.current_thread():
-        #         # thread.
-        #         print(f"Deteniendo hilo {thread}")
 
     def initialize_ui_elements(self):
         subframe = ctk.CTkFrame(self)
@@ -219,27 +178,36 @@ class Reloj(ctk.CTkFrame):
         datos_de_imagen = b64decode(my_img)
         imagen_bytes = BytesIO(datos_de_imagen)
         self.open_imagen = Image.open(imagen_bytes)
-
+        match_found = False
         for temp, entry in zip(decoded_temps, self.planilla_service.huellas):
             # self.progress_bar.step(20)
             match = self.device.zkfp2.DBMatch(tmp, temp)
             if match > 70:
+                match_found = True
                 # threading.Thread(target=self.planilla_service.post_marcacion, args=(entry["id"], datetime.now().astimezone().isoformat())).start()
-
+                self.progress_bar = ctk.CTkProgressBar(self, width=400, height=5)
+                self.progress_bar.pack(side="top")
+                self.progress_bar.configure(mode="indeterminate")
+                self.progress_bar.start()
                 result = self.planilla_service.post_marcacion(entry["id"], datetime.now().astimezone().isoformat())
                 hora = datetime.now().strftime('%H:%M:%S')
+                self.progress_bar.stop()
+                self.progress_bar.pack_forget()
                 if result:
                     self.update_result("green",
                                        f"Usuario identificado: {entry['nombre']} - {hora}")
                 else:
-                    self.update_result("red", f"Usuario no identificado: Score = {match}")
+                    self.update_result("red", f"Error al marcar asistencia: {result} ")
                 # self.update_result("green",
                 #                    f"Usuario identificado: {entry['nombre']} ")
                 break
             else:
-                self.update_result("red", f"Usuario no identificado: Score = {match}")
+                print(f"Usuario no identificado: Score = {match}")
+                # self.update_result("red", f"Usuario no identificado: Score = {match}")
 
-        self.progress_bar.pack_forget()
+        # self.progress_bar.pack_forget()
+        if not match_found:
+            self.update_result("red", "Usuario no identificado")
         imagen_ctk = ctk.CTkImage(light_image=self.filter_image, dark_image=self.filter_image, size=(200, 250))
         self.image_label = ctk.CTkLabel(self, image=imagen_ctk, text="", width=200, height=200)
         self.image_label.pack(padx=10, pady=10)

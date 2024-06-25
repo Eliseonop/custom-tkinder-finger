@@ -59,6 +59,9 @@ class PlanillaService:
             self.huellas = response.json()
             print(self.huellas)
             return True
+        except requests.ConnectionError as e:
+            self.huellas = self.storage.load('huellas', [])
+            return True
         except requests.exceptions.RequestException as e:
             print(f"Error al obtener las huellas: {e}")
             return False
