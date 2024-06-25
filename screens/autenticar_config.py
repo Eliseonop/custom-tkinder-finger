@@ -9,7 +9,7 @@ from utils.storage import Storage
 from screens.log_win import LogWindow
 
 
-class Autenticar(ctk.CTkFrame):
+class AutenticarConfig(ctk.CTkFrame):
     def __init__(self, parent, auth: Auth):
         super().__init__(parent)
         print("Autenticar")
@@ -98,7 +98,7 @@ class Autenticar(ctk.CTkFrame):
                                         font=ctk.CTkFont(size=20, weight="bold"))
         self.label_title.pack(pady=(20, 20))
 
-        self.logo_image = ctk.CTkImage(Image.open("logo.png"), size=(50, 50))
+        self.logo_image = ctk.CTkImage(Image.open("./assets/logo.png"), size=(50, 50))
         self.logo_label = ctk.CTkLabel(self, image=self.logo_image, text="", font=ctk.CTkFont(size=20, weight="bold"),
                                        compound="left")
         self.logo_label.pack(pady=20)

@@ -1,23 +1,18 @@
 import customtkinter as ctk
-from controladores.device import Device
+
 import threading
 from PIL import Image
 from servicios.auth import Auth
 
 
-class AuthWindow(ctk.CTkFrame):
+class Auth_Reloj(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
         self.master = master
-        # self.title("Ventana de Autenticación")
-        # self.geometry("300x200")
+
         self.auth = Auth()
-        self.device = Device()
-        # mantenemos esta ventana en primer plano
-        # self.attributes("-topmost", True)
-        # la centramos en base a la ventana principal
-        # self.geometry(f"+{master.winfo_x() + 50}+{master.winfo_y() + 50}")
-        self.progress_bar = ctk.CTkProgressBar(self, width=800, height=5)
+
+        self.progress_bar = ctk.CTkProgressBar(self, width=800, height=0)
         self.progress_bar.pack(side="top", pady=2, fill="x")
         self.create_logo()
         self.create_widgets()
@@ -30,7 +25,7 @@ class AuthWindow(ctk.CTkFrame):
         self.label_title = ctk.CTkLabel(self, text="Verificar Sistema", font=ctk.CTkFont(size=20, weight="bold"))
         self.label_title.pack(pady=(20, 20))
 
-        self.logo_image = ctk.CTkImage(Image.open("logo.png"), size=(50, 50))
+        self.logo_image = ctk.CTkImage(Image.open("./assets/logo.png"), size=(50, 50))
         self.logo_label = ctk.CTkLabel(self, image=self.logo_image, text="", font=ctk.CTkFont(size=20, weight="bold"),
                                        compound="left")
         self.logo_label.pack(pady=20)
@@ -74,10 +69,10 @@ class AuthWindow(ctk.CTkFrame):
         # self.progress_bar.pack(side="top", fill="x")
         # self.progress_bar.configure(mode="indeterminate")
 
-        # self.progress_bar.pack(side="top", fill="x")
-        # self.progress_bar.configure(height=5)
-        # self.progress_bar.lift()
-        # self.progress_bar.start()
+        self.progress_bar.configure(height=5)
+        self.progress_bar.pack(side="top", fill="x")
+        self.progress_bar.lift()
+        self.progress_bar.start()
         try:
             success = self.auth.sign_in(username, password)
             self.progress_bar.stop()
@@ -97,11 +92,3 @@ class AuthWindow(ctk.CTkFrame):
     def volver_a_reloj(self):
         # Llamar a la función en App para volver al Frame de Reloj
         self.master.view_clock()
-
-    def authenticate(self):
-        token = self.token_entry.get()
-        # Aquí puedes agregar la lógica para autenticar el token.
-        # Si la autenticación es exitosa:
-        self.device.set_token(token)
-        self.master.view_clock()
-        self.destroy()

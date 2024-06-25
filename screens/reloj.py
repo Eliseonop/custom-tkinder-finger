@@ -7,7 +7,7 @@ import threading
 import time
 import locale
 from screens.configuracion import Configuracion
-from screens.auth_window import AuthWindow
+from screens.auth_reloj import Auth_Reloj
 from servicios.auth import Auth
 from datetime import datetime
 from servicios.planilla_service import PlanillaService
@@ -35,8 +35,7 @@ class Reloj(ctk.CTkFrame):
 
         self.start_threads()
         self.toplevel_window = None
-
-
+        # self.rute_logo = "./assets/logo.png"
 
     def destroy(self):
         self.is_active = False
@@ -49,7 +48,7 @@ class Reloj(ctk.CTkFrame):
 
         subframe.pack(fill="x", side="top")
 
-        self.logo_image = ctk.CTkImage(Image.open("logo.png"), size=(50, 50))
+        self.logo_image = ctk.CTkImage(Image.open("./assets/logo.png"), size=(50, 50))
         self.logo_label = ctk.CTkLabel(subframe, image=self.logo_image, text="",
                                        font=ctk.CTkFont(size=20, weight="bold"), compound="left")
         self.logo_label.pack(side="left", padx=20, pady=(20, 10))
@@ -63,7 +62,7 @@ class Reloj(ctk.CTkFrame):
         self.label_hora = ctk.CTkLabel(self, text="", font=("Helvetica", 120), anchor='center')
         self.label_hora.pack(padx=20, pady=20, fill="both", expand=True)
 
-        new_image = ctk.CTkImage(Image.open("fabricacion.png"), size=(30, 30),
+        new_image = ctk.CTkImage(Image.open("./assets/fabricacion.png"), size=(30, 30),
                                  )
 
         boton_configuracion = ctk.CTkButton(self, text="", command=self.ir_a_configuracion,
@@ -132,7 +131,7 @@ class Reloj(ctk.CTkFrame):
             print(f"Error al cargar huellas: {e}")
 
     def go_to_autenticar(self):
-        self.master.on_page(AuthWindow)
+        self.master.on_page(Auth_Reloj)
 
     def esperar_huella(self):
         self.logger.save_log_info("Esperando huella")

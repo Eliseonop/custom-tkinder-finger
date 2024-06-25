@@ -11,7 +11,7 @@ from PIL import Image
 from utils.storage import Storage
 
 
-class VistaPrincipal(ctk.CTkFrame):
+class MainConfig(ctk.CTkFrame):
     def __init__(self, master, auth: Auth, logout):
         super().__init__(master)
 
@@ -21,8 +21,8 @@ class VistaPrincipal(ctk.CTkFrame):
         self.storage = Storage()
 
         self.buttons = [
-            {"name": "Registrar", "vista": SubirTemplate, "icon": "user_add.png"},
-            {"name": "Servidor", "vista": Servidor, "icon": "server.png"},
+            {"name": "Registrar", "vista": SubirTemplate, "icon": "./assets/user_add.png"},
+            {"name": "Servidor", "vista": Servidor, "icon": "./assets/server.png"},
             # Ajusta el nombre y la vista según tus necesidades
             # {"name": "Dispositivo", "vista": Dispositivo}
         ]
@@ -38,7 +38,7 @@ class VistaPrincipal(ctk.CTkFrame):
 
         subframe.pack(fill="x", side="top")
 
-        self.logo_image = ctk.CTkImage(Image.open("logo.png"), size=(50, 50))
+        self.logo_image = ctk.CTkImage(Image.open("./assets/logo.png"), size=(50, 50))
         self.logo_label = ctk.CTkLabel(subframe, image=self.logo_image, text="",
                                        font=ctk.CTkFont(size=20, weight="bold"), compound="left")
         self.logo_label.pack(side="left", padx=20, pady=(20, 10), anchor="center")

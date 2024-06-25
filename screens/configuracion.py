@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from servicios.auth import Auth
-from vistas.vista_principal import VistaPrincipal
-from pages.autenticar import Autenticar
+from vistas.main_config import MainConfig
+from screens.autenticar_config import AutenticarConfig
 import threading
 
 
@@ -28,12 +28,12 @@ class Configuracion(ctk.CTkFrame):
         self.delete_pages()
         if self.auth.token:
             print("Access token found")
-            new_page = VistaPrincipal(self, self.auth, self.logout)
+            new_page = MainConfig(self, self.auth, self.logout)
             new_page.pack(fill="both", expand=True)
             new_page.tkraise()
         else:
             print("Access token not found")
-            new_page = Autenticar(self, self.auth)
+            new_page = AutenticarConfig(self, self.auth)
             new_page.pack(fill="both", expand=True)
             new_page.tkraise()
 

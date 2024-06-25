@@ -1,7 +1,4 @@
 import customtkinter as ctk
-from servicios.auth import Auth
-from vistas.vista_principal import VistaPrincipal
-from pages.autenticar import Autenticar
 from screens.reloj import Reloj
 
 
@@ -12,7 +9,7 @@ class App(ctk.CTk):
         self.resizable(True, True)
 
         self.title("Tcontur Asistencia")
-        self.iconbitmap("favicon.ico")
+        self.iconbitmap("./assets/favicon.ico")
 
         self.view_clock()
 

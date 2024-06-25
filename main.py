@@ -2,6 +2,9 @@ import customtkinter as ctk
 # from vistas.vista_principal import VistaPrincipal
 from app import App
 from utils.storage import Storage
+from dotenv import load_dotenv
+
+load_dotenv()
 
 storage = Storage()
 

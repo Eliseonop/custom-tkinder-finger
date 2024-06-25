@@ -5,6 +5,7 @@ from tkinter import StringVar
 from PIL import Image
 from servicios.auth import Auth
 
+
 class Servidor(ctk.CTkFrame):
     def __init__(self, master, auth: Auth):
         super().__init__(master)
@@ -79,16 +80,16 @@ class Servidor(ctk.CTkFrame):
 
             if self.selected_empresa and self.selected_empresa["codigo"] == empresa["codigo"]:
 
-                my_image = ctk.CTkImage(light_image=Image.open("verify.png"),
-                                        dark_image=Image.open("verify.png"),
+                my_image = ctk.CTkImage(light_image=Image.open("./assets/verify.png"),
+                                        dark_image=Image.open("./assets/verify.png"),
                                         size=(25, 25))
 
                 selected_label = ctk.CTkLabel(self.scrollable_frame, image=my_image, width=20,
                                               text="",
                                               anchor="w")
             else:
-                my_image = ctk.CTkImage(light_image=Image.open("mark.png"),
-                                        dark_image=Image.open("mark.png"),
+                my_image = ctk.CTkImage(light_image=Image.open("./assets/mark.png"),
+                                        dark_image=Image.open("./assets/mark.png"),
                                         size=(20, 20))
                 selected_label = ctk.CTkLabel(self.scrollable_frame, text="", width=20, anchor="w"
                                               , image=my_image)
