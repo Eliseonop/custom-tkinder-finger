@@ -13,7 +13,7 @@ class PlanillaService:
         self.huellas = []
 
     def post_marcacion(self, empleado_id, tipo_marcacion):
-        url = f"{self.base_url}/api/marcaciones"
+        url = f"{self.base_url}/api/marcacioness"
         token = self.auth.obtener_token()
         headers = {
             'Authorization': f'Token {token}'
