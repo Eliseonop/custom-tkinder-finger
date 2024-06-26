@@ -118,8 +118,7 @@ class Reloj(ctk.CTkFrame):
             self.progress_bar.pack_forget()
 
             if carga:
-                print("Huellas cargadas --- inciando auth")
-                self.logger.save_log_info("Huellas cargadas")
+
                 threading.Thread(target=self.esperar_huella()).start()
             else:
                 self.label_result = ctk.CTkLabel(self, text="No se han podido cargar las huellas")
@@ -134,7 +133,7 @@ class Reloj(ctk.CTkFrame):
         self.master.on_page(Auth_Reloj)
 
     def esperar_huella(self):
-        self.logger.save_log_info("Esperando huella")
+        self.logger.save_log_info("-----------------------Esperando huella-----------------------")
         while self.is_active:
             print("Esperando huella...")
             self.reset_ui()
@@ -196,7 +195,7 @@ class Reloj(ctk.CTkFrame):
                     self.update_result("green",
                                        f"Marcando asistencia: {entry['nombre']} - {hora}")
                 else:
-                    self.logger.save_log_error(f"Error con el servidor: {entry['nombre']} ")
+                    # self.logger.save_log_error(f"Error con el servidor: {entry['nombre']} ")
                     self.update_result("red",
                                        f"Error con el Servidor: {entry['nombre']} ")
 
