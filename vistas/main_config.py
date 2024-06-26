@@ -6,7 +6,7 @@ from vistas.servidor import Servidor
 # from utils.sidebar import Sidebar
 # from utils.body import Body
 from servicios.auth import Auth
-
+from vistas.no_subidas import NoSubidas
 from PIL import Image
 from utils.storage import Storage
 
@@ -23,8 +23,8 @@ class MainConfig(ctk.CTkFrame):
         self.buttons = [
             {"name": "Registrar", "vista": SubirTemplate, "icon": "./assets/user_add.png"},
             {"name": "Servidor", "vista": Servidor, "icon": "./assets/server.png"},
-            # Ajusta el nombre y la vista según tus necesidades
-            # {"name": "Dispositivo", "vista": Dispositivo}
+            {"name": "Asistencias offline", "vista": NoSubidas, "icon": "./assets/error.png"}
+
         ]
 
         self.create_main()

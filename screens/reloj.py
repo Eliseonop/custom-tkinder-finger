@@ -183,20 +183,16 @@ class Reloj(ctk.CTkFrame):
             # self.progress_bar.step(20)
             match = self.device.zkfp2.DBMatch(tmp, temp)
             if match > 70:
-                self.logger.save_log_info(f"Comparando huella: {entry['nombre']} - {match}")
+                # self.logger.save_log_info(f"Comparando huella: {entry['nombre']} - {match}")
                 match_found = True
                 # threading.Thread(target=self.planilla_service.post_marcacion, args=(entry["id"], datetime.now().astimezone().isoformat())).start()
-                self.progress_bar = ctk.CTkProgressBar(self, width=400, height=5)
-                self.progress_bar.pack(side="top")
-                self.progress_bar.configure(mode="indeterminate")
-                self.progress_bar.start()
-                self.logger.save_log_info(f"Marcando asistencia: {entry['nombre']} ")
-                result = self.planilla_service.post_marcacion(entry["id"], datetime.now().astimezone().isoformat())
+                self.view_progress()
+                # self.logger.save_log_info(f"Marcando asistencia: {entry['nombre']} ")
                 hora = datetime.now().strftime('%H:%M:%S')
-                self.progress_bar.stop()
-                self.progress_bar.pack_forget()
+                result = self.planilla_service.post_marcacion(entry, datetime.now().astimezone().isoformat())
+                self.stop_progress()
                 if result:
-                    self.logger.save_log_info(f"Asistencia marco con exito: {entry['nombre']} - {hora}")
+                    # self.logger.save_log_info(f"Asistencia marco con exito: {entry['nombre']} - {hora}")
                     self.update_result("green",
                                        f"Marcando asistencia: {entry['nombre']} - {hora}")
                 else:
@@ -213,6 +209,16 @@ class Reloj(ctk.CTkFrame):
         self.image_label = ctk.CTkLabel(self, image=imagen_ctk, text="", width=200, height=200)
         self.image_label.pack(padx=10, pady=10)
 
+    def view_progress(self):
+        self.progress_bar = ctk.CTkProgressBar(self, width=400, height=5)
+        self.progress_bar.pack(side="top")
+        self.progress_bar.configure(mode="indeterminate")
+        self.progress_bar.start()
+
+    def stop_progress(self):
+        self.progress_bar.stop()
+        self.progress_bar.pack_forget()
+
     def make_marcaje(self):
         try:
             self.planilla_service.marcar_asistencia()
@@ -222,7 +228,9 @@ class Reloj(ctk.CTkFrame):
     def update_result(self, color, text):
         if color == "green":
             self.filter_image = ImageOps.colorize(self.open_imagen, "black", "#a7f3d0")
-        else:
+        elif color == "red":
             self.filter_image = ImageOps.colorize(self.open_imagen, "black", "#fecaca")
+        else:
+            self.filter_image = ImageOps.colorize(self.open_imagen, "black", "#cfe2f3")
 
         self.label_result.configure(text=text)

@@ -205,7 +205,6 @@ class SubirTemplate(ctk.CTkScrollableFrame):
 
     def show_fingerprint_message(self):
 
-
         self.frame_title_finger = ctk.CTkFrame(self)
         self.frame_title_finger.pack(pady=20)
         title = f"Registrar huella de {self.selected_empleado['nombre']}"
@@ -261,11 +260,11 @@ class SubirTemplate(ctk.CTkScrollableFrame):
             print("No se ha seleccionado ningún empleado")
             return
 
-        datos = {
-            "empleado": self.selected_empleado['id'],
-            "empleado_name": self.selected_empleado['nombre'],
-            "huella": self.selected_template
-        }
+        # datos = {
+        #     "empleado": self.selected_empleado['id'],
+        #     "empleado_name": self.selected_empleado['nombre'],
+        #     "huella": self.selected_template
+        # }
 
         # self.upload_finger(self.selected_empleado['id'], self.selected_template)
 
