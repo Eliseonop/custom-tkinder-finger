@@ -2,11 +2,6 @@
     {
         "empleado": 29,
         "nombre": "FALCON MESTANZA ELISEO EDU",
-        "hora": "2024-06-26T03:56:31.481625-05:00"
-    },
-    {
-        "empleado": 29,
-        "nombre": "FALCON MESTANZA ELISEO EDU",
         "hora": "2024-06-26T04:56:31.481625-05:00"
     },
     {
@@ -22,6 +17,11 @@
     {
         "empleado": 29,
         "nombre": "FALCON MESTANZA ELISEO EDU",
-        "hora": "2024-06-26T07:56:31.481625-05:00"
+        "hora": "2024-06-26T12:43:39.782674-05:00"
+    },
+    {
+        "empleado": 29,
+        "nombre": "FALCON MESTANZA ELISEO EDU",
+        "hora": "2024-06-26T12:45:11.480943-05:00"
     }
 ]

@@ -82,10 +82,10 @@ class NoSubidas(ctk.CTkFrame):
     def clear_table(self):
         self.scrollable_frame.pack_forget()
 
-    def display_message(self, message, pady=20):
+    def display_message(self, message, pady=20, color="black"):
         if self.message_label:
             self.message_label.pack_forget()
-        self.message_label = ctk.CTkLabel(self, text=message)
+        self.message_label = ctk.CTkLabel(self, text=message, text_color=color, font=("Arial", 12, "bold"))
         self.message_label.pack(padx=20, pady=pady)
 
     def rectificar_marcacion(self, marcacion):
@@ -98,23 +98,23 @@ class NoSubidas(ctk.CTkFrame):
 
     def upload_marcacion(self, empleado_id, hora):
         self.view_progress()
-        self.display_message("Subiendo marcación...")
+        # self.display_message("Subiendo marcación...")
 
         try:
             response = self.planilla_service.post_rectificar(empleado_id, hora)
 
             if response:
-                self.display_message("Huella subida correctamente")
+                self.display_message("Asistencia rectificada correctamente", color="green")
                 self.planilla_service.delete_marcacion_offline(empleado_id, hora)
                 self.stop_progress()
                 self.load_marcaciones_offline()
             else:
                 self.stop_progress()
-                self.display_message("Error al enviar marcación")
+                self.display_message("Error al rectificada asistencia", color="red")
                 self.load_marcaciones_offline()
 
         except Exception as e:
-            self.display_message("Error al enviar marcación")
+            self.display_message("Error al rectificada asistencia", color="red")
             self.stop_progress()
             self.load_marcaciones_offline()
 

@@ -22,7 +22,7 @@ class MainConfig(ctk.CTkFrame):
 
         self.buttons = [
             {"name": "Registrar", "vista": SubirTemplate, "icon": "./assets/user_add.png"},
-            {"name": "Servidor", "vista": Servidor, "icon": "./assets/server.png"},
+            # {"name": "Servidor", "vista": Servidor, "icon": "./assets/server.png"},
             {"name": "Asistencias offline", "vista": NoSubidas, "icon": "./assets/error.png"}
 
         ]

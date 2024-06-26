@@ -2,7 +2,7 @@ from pyzkfp import ZKFP2
 from base64 import b64encode, b64decode
 import requests
 import time
-from modelos.huellas import Huellas
+# from modelos.error_code import Huellas
 from config import CONFIG
 from utils.storage import Storage
 from servicios.empresa_service import EmpresaService

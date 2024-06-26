@@ -12,6 +12,7 @@ from servicios.auth import Auth
 from datetime import datetime
 from servicios.planilla_service import PlanillaService
 from utils.logger import Logger
+from modelos.error_code import ErrorCode
 
 locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
 
@@ -135,7 +136,7 @@ class Reloj(ctk.CTkFrame):
     def esperar_huella(self):
         self.logger.save_log_info("-----------------------Esperando huella-----------------------")
         while self.is_active:
-            print("Esperando huella...")
+            # print("Esperando huella...")
             self.reset_ui()
             self.show_instruction("Ponga su dedo en el lector", "Esperando huella...")
 
@@ -170,6 +171,7 @@ class Reloj(ctk.CTkFrame):
     def process_fingerprint(self, capture):
         self.huellas_capturadas = True
         self.label_instruction.pack_forget()
+        self.label_result.pack_forget()
 
         tmp, img = capture
         my_img = self.device.zkfp2.Blob2Base64String(img)
@@ -182,21 +184,22 @@ class Reloj(ctk.CTkFrame):
             # self.progress_bar.step(20)
             match = self.device.zkfp2.DBMatch(tmp, temp)
             if match > 70:
-                # self.logger.save_log_info(f"Comparando huella: {entry['nombre']} - {match}")
                 match_found = True
-                # threading.Thread(target=self.planilla_service.post_marcacion, args=(entry["id"], datetime.now().astimezone().isoformat())).start()
                 self.view_progress()
-                # self.logger.save_log_info(f"Marcando asistencia: {entry['nombre']} ")
-                hora = datetime.now().strftime('%H:%M:%S')
+
                 result = self.planilla_service.post_marcacion(entry, datetime.now().astimezone().isoformat())
                 self.stop_progress()
-                if result:
+                if result == ErrorCode.SUCCESS:
                     # self.logger.save_log_info(f"Asistencia marco con exito: {entry['nombre']} - {hora}")
-                    self.update_result("green",
-                                       f"Marcando asistencia: {entry['nombre']} - {hora}")
-                else:
+                    self.update_result(result,
+                                       f"Marcando asistencia: {entry['nombre']}")
+                elif result == ErrorCode.OFFLINE:
+                    self.update_result(result, "Marcación offline activa")
+                    pass
+
+                elif result == ErrorCode.ERROR:
                     # self.logger.save_log_error(f"Error con el servidor: {entry['nombre']} ")
-                    self.update_result("red",
+                    self.update_result(result,
                                        f"Error con el Servidor: {entry['nombre']} ")
 
                 break
@@ -224,12 +227,16 @@ class Reloj(ctk.CTkFrame):
         except Exception as e:
             print(f"Error al marcar asistencia: {e}")
 
-    def update_result(self, color, text):
-        if color == "green":
-            self.filter_image = ImageOps.colorize(self.open_imagen, "black", "#a7f3d0")
-        elif color == "red":
-            self.filter_image = ImageOps.colorize(self.open_imagen, "black", "#fecaca")
-        else:
-            self.filter_image = ImageOps.colorize(self.open_imagen, "black", "#cfe2f3")
+    def update_result(self, code: ErrorCode, text):
+        self.label_result = ctk.CTkLabel(self, text=text)
+        self.label_result.pack(padx=10, pady=10)
 
-        self.label_result.configure(text=text)
+        if code == ErrorCode.SUCCESS:
+            self.filter_image = ImageOps.colorize(self.open_imagen, "black", "#a7f3d0")
+            self.label_result.configure(text=text, text_color="#a7f3d0")
+        elif code == ErrorCode.ERROR:
+            self.filter_image = ImageOps.colorize(self.open_imagen, "black", "#fecaca")
+            self.label_result.configure(text=text, text_color="#fecaca")
+        elif code == ErrorCode.OFFLINE:
+            self.filter_image = ImageOps.colorize(self.open_imagen, "black", "#cfe2f3")
+            self.label_result.configure(text=text, text_color="#cfe2f3")
