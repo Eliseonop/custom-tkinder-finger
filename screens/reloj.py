@@ -24,12 +24,12 @@ class Reloj(ctk.CTkFrame):
         self.auth = Auth()
         self.device = Device()
         self.logger = Logger()
+
         self.planilla_service = PlanillaService(self.auth)
         # self.marcaciones_service = MarcacionesService()
         self.huellas_capturadas = False
         self.procesar_huella = True
         self.initialize_ui_elements()
-
         self.is_active = True
 
         print(threading.active_count())
@@ -74,6 +74,7 @@ class Reloj(ctk.CTkFrame):
                                             image=new_image)
         # boton_configuracion.bind("<Enter>", lambda e: print("Mouse sobre el botón"))
         boton_configuracion.pack(padx=20, pady=20, side="bottom", anchor="e")
+
         self.progress_bar = ctk.CTkProgressBar(self, width=400, height=5)
         self.progress_bar.pack(side="bottom", pady=60)
         self.image_label = None
@@ -118,10 +119,22 @@ class Reloj(ctk.CTkFrame):
             print("Deteniendo progress bar")
             self.progress_bar.pack_forget()
 
-            if carga:
+            if carga == ErrorCode.SUCCESS:
+                threading.Thread(target=self.esperar_huella()).start()
+
+            if carga == ErrorCode.OFFLINE:
+                print("off line")
+                # self.label_result = ctk.CTkLabel(self, text="Modo offline activo")
+                # self.label_result.pack(padx=20, pady=20)
+                self.label_offline = ctk.CTkLabel(self, text="Offline", font=ctk.CTkFont(size=18, weight="bold"),
+                                                  fg_color="red")
+                self.label_offline.configure(corner_radius=10)
+                self.label_offline.place(relx=0.0, rely=1.0, anchor="sw", x=20, y=-20)
 
                 threading.Thread(target=self.esperar_huella()).start()
-            else:
+
+
+            elif carga == ErrorCode.ERROR:
                 self.label_result = ctk.CTkLabel(self, text="No se han podido cargar las huellas")
                 self.label_result.pack(padx=20, pady=20)
                 self.boton_autenticar = ctk.CTkButton(self, text="Autenticar", command=self.go_to_autenticar)
@@ -145,9 +158,8 @@ class Reloj(ctk.CTkFrame):
                     capture = self.device.zkfp2.AcquireFingerprint()
                     if capture:
                         print("Huella capturada")
-
                         self.process_fingerprint(capture)
-                        # self.schedule_next_capture()
+
                         time.sleep(4)
                         break
                     # break
@@ -194,7 +206,7 @@ class Reloj(ctk.CTkFrame):
                     self.update_result(result,
                                        f"Marcando asistencia: {entry['nombre']}")
                 elif result == ErrorCode.OFFLINE:
-                    self.update_result(result, "Marcación offline activa")
+                    self.update_result(result, f"Marcación offline : {entry['nombre']}")
                     pass
 
                 elif result == ErrorCode.ERROR:
@@ -208,7 +220,7 @@ class Reloj(ctk.CTkFrame):
             self.logger.save_log_error("Huella no identificada")
             self.update_result("red", "Usuario no identificado")
         imagen_ctk = ctk.CTkImage(light_image=self.filter_image, dark_image=self.filter_image, size=(200, 250))
-        self.image_label = ctk.CTkLabel(self, image=imagen_ctk, text="", width=200, height=200)
+        self.image_label = ctk.CTkLabel(self, image=imagen_ctk, text="", width=200, height=200, corner_radius=15)
         self.image_label.pack(padx=10, pady=10)
 
     def view_progress(self):
@@ -240,3 +252,7 @@ class Reloj(ctk.CTkFrame):
         elif code == ErrorCode.OFFLINE:
             self.filter_image = ImageOps.colorize(self.open_imagen, "black", "#cfe2f3")
             self.label_result.configure(text=text, text_color="#cfe2f3")
+
+    # def toggle_buttons(self, state):
+    #     for button in self.buttons:
+    #         button.configure(state=("normal" if state else "disabled"))

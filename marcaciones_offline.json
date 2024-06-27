@@ -23,5 +23,10 @@
         "empleado": 29,
         "nombre": "FALCON MESTANZA ELISEO EDU",
         "hora": "2024-06-26T12:45:11.480943-05:00"
+    },
+    {
+        "empleado": 58,
+        "nombre": "RICK GRIMES",
+        "hora": "2024-06-26T16:56:38.233586-05:00"
     }
 ]

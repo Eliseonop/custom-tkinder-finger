@@ -7,6 +7,7 @@ import json
 import os
 from servicios.empresa_service import EmpresaService
 from modelos.error_code import ErrorCode
+from utils.storage import Storage
 
 
 class PlanillaService:
@@ -19,6 +20,7 @@ class PlanillaService:
         self.empleados = []
         self.huellas = []
         self.marcaciones_offline = []
+        self.storage = Storage()
 
         self.load_marcaciones_offline()
 
@@ -89,7 +91,7 @@ class PlanillaService:
             print(f"Error al obtener los empleados: {e}")
             return False
 
-    def obtener_huellas(self):
+    def obtener_huellas(self) -> ErrorCode:
         url = f"{self.new_url}/api/empleados/ver_huellas"
         token = self.auth.obtener_token()
         headers = {
@@ -100,13 +102,13 @@ class PlanillaService:
             response.raise_for_status()
             self.huellas = response.json()
             print(self.huellas)
-            return True
+            return ErrorCode.SUCCESS
         except requests.ConnectionError as e:
             self.huellas = self.storage.load('huellas', [])
-            return True
+            return ErrorCode.OFFLINE
         except requests.exceptions.RequestException as e:
             print(f"Error al obtener las huellas: {e}")
-            return False
+            return ErrorCode.ERROR
 
     def upload_huella(self, empleado_id, huella):
         url = f"{self.new_url}/api/empleados/{empleado_id}/guardar_huella"
