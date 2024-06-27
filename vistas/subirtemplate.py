@@ -15,7 +15,7 @@ class SubirTemplate(ctk.CTkScrollableFrame):
     def __init__(self, master, auth: Auth):
         super().__init__(master)
         self.pack(fill="both", expand=True)
-
+        # self.title_window()
         self.initialize_ui_elements()
         self.initialize_fingerprint_device()
         self.initialize_services(auth)
@@ -39,7 +39,8 @@ class SubirTemplate(ctk.CTkScrollableFrame):
     def initialize_ui_elements(self):
         self.progress_bar = ctk.CTkProgressBar(self, width=800, height=5)
         self.progress_bar.pack(side="top", pady=2, fill="x")
-
+        self.title_label = ctk.CTkLabel(self, text="Registro de Huella", font=("Arial", 20, "bold"))
+        self.title_label.pack(pady=2, padx=2, side="top")
         # self.label_buscar = ctk.CTkLabel(self, text="Buscar Empleado")
         # self.label_buscar.pack(padx=20, pady=2)
         #
@@ -95,7 +96,7 @@ class SubirTemplate(ctk.CTkScrollableFrame):
         self.frame_general_table.pack(pady=20)
 
         self.frame_search = ctk.CTkFrame(self.frame_general_table)
-        self.frame_search.pack(pady=20, padx=20)
+        self.frame_search.pack(pady=2, padx=20)
 
         self.label_buscar = ctk.CTkLabel(self.frame_search, text="Buscar Empleado")
         self.label_buscar.pack(padx=20, pady=2)

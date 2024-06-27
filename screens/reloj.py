@@ -218,7 +218,7 @@ class Reloj(ctk.CTkFrame):
 
         if not match_found:
             self.logger.save_log_error("Huella no identificada")
-            self.update_result("red", "Usuario no identificado")
+            self.update_result(ErrorCode.ERROR, "Empleado no identificado")
         imagen_ctk = ctk.CTkImage(light_image=self.filter_image, dark_image=self.filter_image, size=(200, 250))
         self.image_label = ctk.CTkLabel(self, image=imagen_ctk, text="", width=200, height=200, corner_radius=15)
         self.image_label.pack(padx=10, pady=10)
