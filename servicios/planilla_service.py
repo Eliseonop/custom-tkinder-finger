@@ -3,7 +3,6 @@ import requests
 from servicios.auth import Auth
 from tkinter import messagebox
 from CTkMessagebox import CTkMessagebox
-import json
 import os
 from servicios.empresa_service import EmpresaService
 from modelos.error_code import ErrorCode
@@ -14,15 +13,23 @@ class PlanillaService:
     def __init__(self, auth: Auth):
         self.base_url = os.getenv('API_URL_GENERAL')
         self.empresa_service = EmpresaService()
-        self.empresa = self.empresa_service.get_empresa_storage()
-        self.new_url = f"https://{self.empresa['codigo'] + self.base_url}"
+        self.new_url = None
         self.auth = auth
         self.empleados = []
         self.huellas = []
         self.marcaciones_offline = []
         self.storage = Storage()
 
+        self.create_new_url()
         self.load_marcaciones_offline()
+
+    def create_new_url(self):
+        empresa = self.empresa_service.get_empresa_storage()
+
+        if empresa is None:
+            self.new_url = ""
+        else:
+            self.new_url = f"https://{empresa['codigo'] + self.base_url}"
 
     def post_marcacion(self, empleado, hora, save_offline=True) -> ErrorCode:
         url = f"{self.new_url}/api/marcaciones"
@@ -92,6 +99,8 @@ class PlanillaService:
             return False
 
     def obtener_huellas(self) -> ErrorCode:
+        self.empresa_service.view_message_if_not_empresa()
+
         url = f"{self.new_url}/api/empleados/ver_huellas"
         token = self.auth.obtener_token()
         headers = {
@@ -101,10 +110,11 @@ class PlanillaService:
             response = requests.get(url, headers=headers)
             response.raise_for_status()
             self.huellas = response.json()
-            print(self.huellas)
+            self.storage.save('huellas', self.huellas)
             return ErrorCode.SUCCESS
         except requests.ConnectionError as e:
             self.huellas = self.storage.load('huellas', [])
+            print(self.huellas)
             return ErrorCode.OFFLINE
         except requests.exceptions.RequestException as e:
             print(f"Error al obtener las huellas: {e}")
@@ -126,14 +136,8 @@ class PlanillaService:
             return True
         except requests.exceptions.RequestException as e:
             details = e.response.json()
-            # print('json')
-            print(details)
-            # messagebox.showerror("Error", )
-
             CTkMessagebox(title="Error al subir la huella!", message=details['detail']['message'],
                           icon="warning", option_1="Cancelar")
-            # messagebox.showerror("Error", "Error al subir la huella")
-
             print(f"Error al subir la huella: {e}")
             return False
 
@@ -142,16 +146,10 @@ class PlanillaService:
         self.save_marcaciones_offline()
 
     def save_marcaciones_offline(self):
-        with open('marcaciones_offline.json', 'w') as file:
-            json.dump(self.marcaciones_offline, file, indent=4)
+        self.storage.save('marcaciones_offline', self.marcaciones_offline)
 
     def load_marcaciones_offline(self):
-        if os.path.exists('marcaciones_offline.json'):
-            with open('marcaciones_offline.json', 'r') as file:
-                self.marcaciones_offline = json.load(file)
-            return True
-        else:
-            return False
+        self.marcaciones_offline = self.storage.load('marcaciones_offline', [])
 
     def delete_marcacion_offline(self, empleado_id, hora):
         self.marcaciones_offline = [m for m in self.marcaciones_offline if

@@ -195,6 +195,7 @@ class Reloj(ctk.CTkFrame):
         for temp, entry in zip(decoded_temps, self.planilla_service.huellas):
             # self.progress_bar.step(20)
             match = self.device.zkfp2.DBMatch(tmp, temp)
+            print(f"Match: {match}")
             if match > 70:
                 match_found = True
                 self.view_progress()
@@ -206,7 +207,7 @@ class Reloj(ctk.CTkFrame):
                     self.update_result(result,
                                        f"Marcando asistencia: {entry['nombre']}")
                 elif result == ErrorCode.OFFLINE:
-                    self.update_result(result, f"Marcación offline : {entry['nombre']}")
+                    self.update_result(result, f"Marcando asistencia : {entry['nombre']}")
                     pass
 
                 elif result == ErrorCode.ERROR:
@@ -250,8 +251,8 @@ class Reloj(ctk.CTkFrame):
             self.filter_image = ImageOps.colorize(self.open_imagen, "black", "#fecaca")
             self.label_result.configure(text=text, text_color="#fecaca")
         elif code == ErrorCode.OFFLINE:
-            self.filter_image = ImageOps.colorize(self.open_imagen, "black", "#cfe2f3")
-            self.label_result.configure(text=text, text_color="#cfe2f3")
+            self.filter_image = ImageOps.colorize(self.open_imagen, "black", "#a7f3d0")
+            self.label_result.configure(text=text, text_color="#a7f3d0")
 
     # def toggle_buttons(self, state):
     #     for button in self.buttons:

@@ -21,7 +21,7 @@ class MainConfig(ctk.CTkFrame):
         self.storage = Storage()
 
         self.buttons = [
-            {"name": "Registrar", "vista": SubirTemplate, "icon": "./assets/user_add.png"},
+            {"name": "Registrar Huella", "vista": SubirTemplate, "icon": "./assets/user_add.png"},
             # {"name": "Servidor", "vista": Servidor, "icon": "./assets/server.png"},
             {"name": "Asistencias offline", "vista": NoSubidas, "icon": "./assets/error.png"}
 
@@ -74,8 +74,8 @@ class MainConfig(ctk.CTkFrame):
             subframe.grid(row=row, column=col, padx=30, pady=30)
             icon = ctk.CTkImage(Image.open(icon), size=(50, 50))
             icon_label = ctk.CTkLabel(subframe, image=icon, text="",
-                                      font=ctk.CTkFont(size=20, weight="bold"), compound="left")
-            icon_label.pack(side="left", padx=20, pady=(20, 10))
+                                      font=ctk.CTkFont(size=20, weight="bold"))
+            icon_label.pack(padx=20, pady=(20, 10))
 
             button = ctk.CTkButton(subframe, text=name, command=lambda v=vista: self.on_page(v),
                                    font=("Helvetica", 22))

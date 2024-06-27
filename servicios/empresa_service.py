@@ -1,6 +1,7 @@
 from config import CONFIG
 import requests
 from utils.storage import Storage
+from CTkMessagebox import CTkMessagebox
 
 
 class EmpresaService:
@@ -28,7 +29,8 @@ class EmpresaService:
     def get_empresa_storage(self):
         return self.storage.load('empresa')
 
-        # if load_empresa:
-        #     return load_empresa
-        # else:
-        #     return False
+    def view_message_if_not_empresa(self):
+        if not self.get_empresa_storage():
+            CTkMessagebox(title="Empresa no seleccionada",
+                          message="Por favor, vaya a configuración y seleccione una empresa.",
+                          icon="warning")

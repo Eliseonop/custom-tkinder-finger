@@ -1,3 +1,5 @@
-'empresa', (111616, 76)
-'token', (112128, 55)
-'appearance_mode', (112640, 19)
+'empresa', (0, 76)
+'token', (512, 55)
+'appearance_mode', (1024, 21)
+'marcaciones_offline', (1536, 320)
+'huellas', (2048, 11329)
