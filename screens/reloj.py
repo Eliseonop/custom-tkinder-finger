@@ -66,13 +66,19 @@ class Reloj(ctk.CTkFrame):
         self.label_hora.pack(padx=20, pady=20, fill="both", expand=True)
 
         new_image = ctk.CTkImage(Image.open(RUTA_FABRICACION), size=(30, 30),
+
                                  )
 
         boton_configuracion = ctk.CTkButton(self, text="", command=self.ir_a_configuracion,
-                                            width=10, height=30,
-                                            corner_radius=90,
+                                            width=10, height=10,
+                                            corner_radius=75,
                                             fg_color="transparent", bg_color="transparent",
-                                            border_spacing=10,
+                                            border_spacing=0,
+
+                                            # hover_color="#0ea5e9",
+                                            text_color="white",
+                                            # hover=False,
+                                            border_color="black",
                                             image=new_image)
         # boton_configuracion.bind("<Enter>", lambda e: print("Mouse sobre el botón"))
         boton_configuracion.pack(padx=20, pady=20, side="bottom", anchor="e")
@@ -136,7 +142,7 @@ class Reloj(ctk.CTkFrame):
                     print("off line")
                     # self.label_result = ctk.CTkLabel(self, text="Modo offline activo")
                     # self.label_result.pack(padx=20, pady=20)
-                    self.label_offline = ctk.CTkLabel(self, text="Offline", font=ctk.CTkFont(size=18, weight="bold"),
+                    self.label_offline = ctk.CTkLabel(self, text="Offline", font=ctk.CTkFont(size=12, weight="bold"),
                                                       fg_color="red")
                     self.label_offline.configure(corner_radius=10)
                     self.label_offline.place(relx=0.0, rely=1.0, anchor="sw", x=20, y=-20)

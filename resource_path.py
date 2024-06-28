@@ -11,7 +11,7 @@ def resource_path(relative_path):
 RUTA_FAVICON = resource_path(os.path.join('assets', 'favicon.ico'))
 
 RUTA_LOGO = resource_path(os.path.join('assets', 'logo.png'))
-RUTA_FABRICACION = resource_path(os.path.join('assets', 'fabricacion.png'))
+RUTA_FABRICACION = resource_path(os.path.join('assets', 'gear.png'))
 
 RUTA_VERIFY = resource_path(os.path.join('assets', 'verify.png'))
 RUTA_MARK = resource_path(os.path.join('assets', 'mark.png'))
