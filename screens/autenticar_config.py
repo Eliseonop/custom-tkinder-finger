@@ -7,6 +7,7 @@ from servicios.empresa_service import EmpresaService
 from vistas.servidor import Servidor
 from utils.storage import Storage
 from screens.log_win import LogWindow
+from resource_path import RUTA_LOGO
 
 
 class AutenticarConfig(ctk.CTkFrame):
@@ -68,7 +69,7 @@ class AutenticarConfig(ctk.CTkFrame):
                                                      variable=ctk.StringVar(value=value_scaling)
                                                      )
         self.scaling_optionemenu.pack(side="left", padx=0)
-        self.button_1 = ctk.CTkButton(frame_scale, text="open logs", command=self.open_toplevel)
+        self.button_1 = ctk.CTkButton(frame_scale, text="Abrir Logs", command=self.open_toplevel)
         self.button_1.pack(side="left", padx=20, pady=20)
 
     def open_toplevel(self):
@@ -98,7 +99,7 @@ class AutenticarConfig(ctk.CTkFrame):
                                         font=ctk.CTkFont(size=20, weight="bold"))
         self.label_title.pack(pady=(20, 20))
 
-        self.logo_image = ctk.CTkImage(Image.open("./assets/logo.png"), size=(50, 50))
+        self.logo_image = ctk.CTkImage(Image.open(RUTA_LOGO), size=(50, 50))
         self.logo_label = ctk.CTkLabel(self, image=self.logo_image, text="", font=ctk.CTkFont(size=20, weight="bold"),
                                        compound="left")
         self.logo_label.pack(pady=20)

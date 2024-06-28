@@ -1,4 +1,3 @@
-from config import CONFIG
 import requests
 from servicios.empresa_service import EmpresaService
 from utils.storage import Storage

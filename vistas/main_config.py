@@ -1,14 +1,10 @@
 import customtkinter as ctk
-from controladores.device import Device
 from vistas.subirtemplate import SubirTemplate
-from vistas.servidor import Servidor
-# from vistas.dispositivo import Dispositivo
-# from utils.sidebar import Sidebar
-# from utils.body import Body
 from servicios.auth import Auth
 from vistas.no_subidas import NoSubidas
 from PIL import Image
 from utils.storage import Storage
+from resource_path import RUTA_ERROR_RED, RUTA_USER_ADD, RUTA_LOGO
 
 
 class MainConfig(ctk.CTkFrame):
@@ -21,9 +17,9 @@ class MainConfig(ctk.CTkFrame):
         self.storage = Storage()
 
         self.buttons = [
-            {"name": "Registrar Huella", "vista": SubirTemplate, "icon": "./assets/user_add.png"},
-            # {"name": "Servidor", "vista": Servidor, "icon": "./assets/server.png"},
-            {"name": "Asistencias offline", "vista": NoSubidas, "icon": "./assets/error.png"}
+            {"name": "Registrar Huella", "vista": SubirTemplate, "icon": RUTA_USER_ADD},
+            # {"name": "Servidor", "vista": Servidor, "icon": RUTA_SERVER},
+            {"name": "Asistencias offline", "vista": NoSubidas, "icon": RUTA_ERROR_RED}
 
         ]
 
@@ -38,7 +34,7 @@ class MainConfig(ctk.CTkFrame):
 
         subframe.pack(fill="x", side="top")
 
-        self.logo_image = ctk.CTkImage(Image.open("./assets/logo.png"), size=(50, 50))
+        self.logo_image = ctk.CTkImage(Image.open(RUTA_LOGO), size=(50, 50))
         self.logo_label = ctk.CTkLabel(subframe, image=self.logo_image, text="",
                                        font=ctk.CTkFont(size=20, weight="bold"), compound="left")
         self.logo_label.pack(side="left", padx=20, pady=(20, 10), anchor="center")

@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from screens.reloj import Reloj
+from resource_path import RUTA_FAVICON
 
 
 class App(ctk.CTk):
@@ -9,7 +10,8 @@ class App(ctk.CTk):
         self.resizable(True, True)
 
         self.title("Tcontur Asistencia")
-        self.iconbitmap("./assets/favicon.ico")
+
+        self.iconbitmap(RUTA_FAVICON)
 
         self.view_clock()
 

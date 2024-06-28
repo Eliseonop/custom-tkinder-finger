@@ -4,6 +4,7 @@ from servicios.empresa_service import EmpresaService
 from tkinter import StringVar
 from PIL import Image
 from servicios.auth import Auth
+from resource_path import RUTA_VERIFY, RUTA_MARK
 
 
 class Servidor(ctk.CTkFrame):
@@ -80,16 +81,16 @@ class Servidor(ctk.CTkFrame):
 
             if self.selected_empresa and self.selected_empresa["codigo"] == empresa["codigo"]:
 
-                my_image = ctk.CTkImage(light_image=Image.open("./assets/verify.png"),
-                                        dark_image=Image.open("./assets/verify.png"),
+                my_image = ctk.CTkImage(light_image=Image.open(RUTA_VERIFY),
+                                        dark_image=Image.open(RUTA_VERIFY),
                                         size=(25, 25))
 
                 selected_label = ctk.CTkLabel(self.scrollable_frame, image=my_image, width=20,
                                               text="",
                                               anchor="w")
             else:
-                my_image = ctk.CTkImage(light_image=Image.open("./assets/mark.png"),
-                                        dark_image=Image.open("./assets/mark.png"),
+                my_image = ctk.CTkImage(light_image=Image.open(RUTA_MARK),
+                                        dark_image=Image.open(RUTA_MARK),
                                         size=(20, 20))
                 selected_label = ctk.CTkLabel(self.scrollable_frame, text="", width=20, anchor="w"
                                               , image=my_image)

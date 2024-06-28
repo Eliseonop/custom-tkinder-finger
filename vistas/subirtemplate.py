@@ -7,7 +7,7 @@ from base64 import b64encode, b64decode
 from io import BytesIO
 from PIL import Image
 from pyzkfp import ZKFP2
-from servicios.finger_service import FingerService
+# from servicios.finger_service import FingerService
 from time import sleep
 
 
@@ -67,7 +67,6 @@ class SubirTemplate(ctk.CTkScrollableFrame):
     def initialize_services(self, auth):
         # auth = Auth()
         self.planilla_service = PlanillaService(auth)
-        self.finger_service = FingerService(auth)
 
     def load_empleados(self):
         threading.Thread(target=self.load_empleados_thread).start()
@@ -299,11 +298,9 @@ class SubirTemplate(ctk.CTkScrollableFrame):
             # self.display_message("Error al subir la huella")
             # self.cancelar()
 
-        # self.finger_service.push_finger(datos)
-
-    def eliminar_huella(self, empleado_id):
-        print(f"Eliminando huella del empleado con ID: {empleado_id}")
-        threading.Thread(target=self.finger_service.delete_finger, args=(empleado_id,)).start()
+    # def eliminar_huella(self, empleado_id):
+    #     print(f"Eliminando huella del empleado con ID: {empleado_id}")
+    #     threading.Thread(target=self.planilla_service.delete_finger, args=(empleado_id,)).start()
 
     def check_autocomplete(self, event):
         typed = self.var.get().lower()

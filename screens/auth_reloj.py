@@ -3,6 +3,7 @@ import threading
 from PIL import Image
 from servicios.auth import Auth
 from servicios.empresa_service import EmpresaService
+from resource_path import RUTA_LOGO
 
 
 class Auth_Reloj(ctk.CTkFrame):
@@ -29,7 +30,7 @@ class Auth_Reloj(ctk.CTkFrame):
         self.label_title = ctk.CTkLabel(self, text="Verificar Sistema", font=ctk.CTkFont(size=20, weight="bold"))
         self.label_title.pack(pady=(20, 20))
 
-        self.logo_image = ctk.CTkImage(Image.open("./assets/logo.png"), size=(50, 50))
+        self.logo_image = ctk.CTkImage(Image.open(RUTA_LOGO), size=(50, 50))
         self.logo_label = ctk.CTkLabel(self, image=self.logo_image, text="", font=ctk.CTkFont(size=20, weight="bold"),
                                        compound="left")
         self.logo_label.pack(pady=20)
