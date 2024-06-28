@@ -2,11 +2,12 @@ import requests
 from utils.storage import Storage
 from CTkMessagebox import CTkMessagebox
 import os
+from utils.config import CONFIG
 
 
 class EmpresaService:
     def __init__(self):
-        self.base_url = os.getenv('API_URL_URBANITO')
+        self.base_url = CONFIG.API_URL_URBANITO
         self.storage = Storage()
         self.empresas = []
 

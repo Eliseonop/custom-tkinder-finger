@@ -5,11 +5,12 @@ import os
 from servicios.empresa_service import EmpresaService
 from modelos.error_code import ErrorCode
 from utils.storage import Storage
-
+from utils.config import CONFIG
+from utils.logger import Logger
 
 class PlanillaService:
     def __init__(self, auth: Auth):
-        self.base_url = os.getenv('API_URL_GENERAL')
+        self.base_url = CONFIG.API_URL_GENERAL
         self.empresa_service = EmpresaService()
         self.new_url = None
         self.auth = auth
@@ -17,6 +18,7 @@ class PlanillaService:
         self.huellas = []
         self.marcaciones_offline = []
         self.storage = Storage()
+        self.logger = Logger()
 
         self.create_new_url()
         self.load_marcaciones_offline()
@@ -41,9 +43,36 @@ class PlanillaService:
         }
         try:
             response = requests.post(url, headers=headers, json=data)
-            response.raise_for_status()
-            print(data)
-            return ErrorCode.SUCCESS
+            print(response.json())
+            print(response.status_code)
+            if response.status_code == 201:
+                # self.delete_marcacion_offline(empleado['id'], hora)
+                return ErrorCode.SUCCESS
+            if response.status_code == 400:
+                print('error 400')
+                self.logger.save_log_error(response.json())
+                if response.json()['error_class'] == 'ValidationError':
+                    CTkMessagebox(title="Error", message=f"{response.json()}",
+                                  icon="warning")
+
+                return ErrorCode.ERROR
+
+            if response.status_code == 401:
+                if save_offline:
+                    data_offline = {
+                        'empleado': empleado['id'],
+                        'nombre': empleado['nombre'],
+                        'hora': hora
+                    }
+
+                    self.add_to_marcaciones_offline(data_offline)
+
+                # CTkMessagebox(title="Error de autenticación", message="No tiene permisos para marcar.",
+                #               icon="warning")
+
+                return ErrorCode.UNAUTHORIZED
+            return ErrorCode.ERROR
+
         except requests.ConnectionError as e:
             print(f"Error de conexion: {e}")
             if save_offline:
@@ -106,17 +135,33 @@ class PlanillaService:
         }
         try:
             response = requests.get(url, headers=headers)
-            response.raise_for_status()
-            self.huellas = response.json()
-            self.storage.save('huellas', self.huellas)
-            return ErrorCode.SUCCESS
+            # response.raise_for_status()
+            if response.status_code == 200:
+                self.huellas = response.json()
+                self.storage.save('huellas', self.huellas)
+                return ErrorCode.SUCCESS
+            if response.status_code == 401:
+                self.huellas = self.storage.load('huellas', [])
+
+                # CTkMessagebox(title="Error de autenticación", message="No tiene permisos para ver las huellas.",
+                #               icon="warning")
+
+                return ErrorCode.UNAUTHORIZED
+
+            CTkMessagebox(title="Error", message="Error de Servidor.",
+                          icon="warning")
+            self.huellas = self.storage.load('huellas', [])
+
+            return ErrorCode.ERROR
+
         except requests.ConnectionError as e:
             self.huellas = self.storage.load('huellas', [])
             print(self.huellas)
             return ErrorCode.OFFLINE
-        except requests.exceptions.RequestException as e:
-            print(f"Error al obtener las huellas: {e}")
-            return ErrorCode.ERROR
+        # except requests.exceptions.RequestException as e:
+        #     print(f"Error al obtener las huellas: {e}")
+        #     self.huellas = self.storage.load('huellas', [])
+        #     return ErrorCode.ERROR
 
     def upload_huella(self, empleado_id, huella):
         url = f"{self.new_url}/api/empleados/{empleado_id}/guardar_huella"

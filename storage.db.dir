@@ -1,5 +1,4 @@
 'empresa', (0, 76)
 'token', (512, 55)
-'appearance_mode', (1024, 21)
-'marcaciones_offline', (1536, 320)
-'huellas', (2048, 11329)
+'huellas', (1024, 11329)
+'marcaciones_offline', (15872, 1652)

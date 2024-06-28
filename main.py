@@ -16,4 +16,5 @@ ctk.set_appearance_mode(appearance_mode if appearance_mode else 'system')
 ctk.set_default_color_theme("blue")
 ctk.set_widget_scaling(scaling if scaling else 1.0)
 app = App()
+
 app.mainloop()

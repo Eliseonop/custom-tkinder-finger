@@ -2,11 +2,12 @@ import requests
 from servicios.empresa_service import EmpresaService
 from utils.storage import Storage
 import os
+from utils.config import CONFIG
 
 
 class Auth:
     def __init__(self):
-        self.base_url = os.getenv('API_URL_GENERAL')
+        self.base_url = CONFIG.API_URL_GENERAL
         self.empresa_service = EmpresaService()
         self.token = None
         self.user = None
