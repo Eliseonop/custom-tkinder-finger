@@ -1,16 +1,8 @@
 from pyzkfp import ZKFP2
-from base64 import b64encode, b64decode
-import requests
-import time
-# from modelos.error_code import Huellas
-from config import CONFIG
-from utils.storage import Storage
-from servicios.empresa_service import EmpresaService
 
 
 class Device:
     def __init__(self):
-        # self.app = app
         self.zkfp2 = ZKFP2()
         self.zkfp2.Init()
         device_count = self.zkfp2.GetDeviceCount()

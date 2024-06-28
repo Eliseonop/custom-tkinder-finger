@@ -14,6 +14,7 @@ from servicios.planilla_service import PlanillaService
 from utils.logger import Logger
 from modelos.error_code import ErrorCode
 from resource_path import RUTA_LOGO, RUTA_FABRICACION
+from CTkMessagebox import CTkMessagebox
 
 locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
 
@@ -31,16 +32,16 @@ class Reloj(ctk.CTkFrame):
         self.huellas_capturadas = False
         self.procesar_huella = True
         self.initialize_ui_elements()
-        self.is_active = True
-
+        self.is_active_huella = True
+        self.is_active_reloj = True
         print(threading.active_count())
 
         self.start_threads()
         self.toplevel_window = None
 
     def destroy(self):
-        self.is_active = False
-
+        self.is_active_huella = False
+        self.is_active_reloj = False
         super().destroy()
 
     def initialize_ui_elements(self):
@@ -82,7 +83,8 @@ class Reloj(ctk.CTkFrame):
         self.label_result = None
 
     def ir_a_configuracion(self):
-        self.is_active = False
+        # self.is_active_huella = False
+
         self.destroy()
         self.master.on_page(Configuracion)
         # self.destroy()
@@ -94,7 +96,7 @@ class Reloj(ctk.CTkFrame):
         threading.Thread(target=self.load_huellas, daemon=True).start()
 
     def actualizar_reloj(self):
-        while self.is_active:
+        while self.is_active_reloj:
             ahora = datetime.now()
             hora_formateada = ahora.strftime('%H:%M:%S')
             self.label_hora.configure(text=hora_formateada)
@@ -102,7 +104,7 @@ class Reloj(ctk.CTkFrame):
             time.sleep(1)
 
     def update_day(self):
-        while self.is_active:
+        while self.is_active_reloj:
             ahora = datetime.now()
             dia_formateado = ahora.strftime('%A, %d de %B de %Y').capitalize()
             self.label_dia.configure(text=dia_formateado)
@@ -143,17 +145,19 @@ class Reloj(ctk.CTkFrame):
         except Exception as e:
             print(f"Error al cargar huellas: {e}")
 
+    #
+
     def go_to_autenticar(self):
         self.master.on_page(Auth_Reloj)
 
     def esperar_huella(self):
         self.logger.save_log_info("-----------------------Esperando huella-----------------------")
-        while self.is_active:
+        while self.is_active_huella:
             # print("Esperando huella...")
             self.reset_ui()
             self.show_instruction("Ponga su dedo en el lector", "Esperando huella...")
 
-            while self.is_active:
+            while self.is_active_huella:
                 try:
                     capture = self.device.zkfp2.AcquireFingerprint()
                     if capture:
@@ -165,6 +169,23 @@ class Reloj(ctk.CTkFrame):
                     # break
                 except Exception as e:
                     print(f"Error al autenticar: {e}")
+                    self.is_active_huella = False
+                    # Cerrar la aplicacion hubo un error con el dispositivo
+                    self.reset_ui()
+                    CTkMessagebox(title="Error Device",
+                                  message="Por favor, verifique la conectividad del dispositivo o asegúrese de que no haya otras aplicaciones utilizando el mismo recurso.",
+                                  icon="warning",
+                                  sound=True
+                                  )
+                    # cerrar la aplicacion
+                    # self.
+                    # self.destroy()
+                    self.label_result = ctk.CTkLabel(self, text="Hubo un error con el dispositivo", text_color="red",
+                                                     font=ctk.CTkFont(size=16, weight="normal")
+                                                     )
+                    self.label_result.pack(padx=20, pady=20)
+
+                    break
 
     def reset_ui(self):
         if self.image_label:

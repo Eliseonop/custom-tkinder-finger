@@ -1,7 +1,5 @@
-from config import CONFIG
 import requests
 from servicios.auth import Auth
-from tkinter import messagebox
 from CTkMessagebox import CTkMessagebox
 import os
 from servicios.empresa_service import EmpresaService

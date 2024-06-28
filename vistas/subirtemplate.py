@@ -7,8 +7,6 @@ from base64 import b64encode, b64decode
 from io import BytesIO
 from PIL import Image
 from pyzkfp import ZKFP2
-# from servicios.finger_service import FingerService
-from time import sleep
 
 
 class SubirTemplate(ctk.CTkScrollableFrame):
@@ -32,7 +30,7 @@ class SubirTemplate(ctk.CTkScrollableFrame):
 
     def destroy(self):
         self.whileValue = False
-        # self.zkfp2.Terminate()Q
+        # self.zkfp2.Terminate()
         print("Destruyendo vista de subir template")
         super().destroy()
 
