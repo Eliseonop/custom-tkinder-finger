@@ -6,6 +6,7 @@ class ErrorCode(Enum):
     OFFLINE = 2
     ERROR = 3
     UNAUTHORIZED = 4
+    VALIDATION_ERROR = 5
 
 # class Huellas:
 #     def __init__(self, id, empleado, template):

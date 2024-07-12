@@ -260,3 +260,31 @@
 2024-06-28 13:22:27,797 - INFO - -----------------------Esperando huella-----------------------
 2024-06-28 13:22:31,327 - INFO - -----------------------Esperando huella-----------------------
 2024-06-28 13:22:56,939 - INFO - -----------------------Esperando huella-----------------------
+2024-06-28 13:25:09,101 - INFO - -----------------------Esperando huella-----------------------
+2024-07-01 09:00:03,596 - INFO - -----------------------Esperando huella-----------------------
+2024-07-01 09:00:11,926 - INFO - -----------------------Esperando huella-----------------------
+2024-07-01 09:00:18,605 - ERROR - {'detail': {'hora': [{'message': 'No puede haber dos marcaciones al mismo tiempo', 'code': 'same_minute'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-07-01 09:02:07,686 - INFO - -----------------------Esperando huella-----------------------
+2024-07-01 09:02:14,885 - ERROR - {'detail': {'hora': [{'message': 'No puede haber dos marcaciones al mismo tiempo', 'code': 'same_minute'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-07-01 09:07:23,180 - INFO - -----------------------Esperando huella-----------------------
+2024-07-01 09:13:44,745 - INFO - -----------------------Esperando huella-----------------------
+2024-07-01 09:16:18,331 - INFO - -----------------------Esperando huella-----------------------
+2024-07-01 09:19:00,700 - INFO - -----------------------Esperando huella-----------------------
+2024-07-01 09:19:07,048 - INFO - -----------------------Esperando huella-----------------------
+2024-07-01 09:19:14,428 - INFO - -----------------------Esperando huella-----------------------
+2024-07-01 09:19:21,233 - ERROR - {'detail': {'hora': [{'message': 'No puede haber dos marcaciones al mismo tiempo', 'code': 'same_minute'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-07-01 09:20:09,706 - INFO - -----------------------Esperando huella-----------------------
+2024-07-01 09:20:16,567 - ERROR - {'detail': {'hora': [{'message': 'No puede haber dos marcaciones al mismo tiempo', 'code': 'same_minute'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-07-01 09:21:02,680 - INFO - -----------------------Esperando huella-----------------------
+2024-07-01 09:21:10,730 - ERROR - {'detail': {'hora': [{'message': 'No puede haber dos marcaciones al mismo tiempo', 'code': 'same_minute'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-07-01 09:21:38,254 - INFO - -----------------------Esperando huella-----------------------
+2024-07-01 09:21:39,912 - ERROR - Huella no identificada
+2024-07-01 09:21:44,325 - ERROR - {'detail': {'hora': [{'message': 'No puede haber dos marcaciones al mismo tiempo', 'code': 'same_minute'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-07-01 09:22:04,746 - ERROR - Huella no identificada
+2024-07-01 09:22:13,700 - ERROR - {'detail': {'hora': [{'message': 'No puede haber dos marcaciones al mismo tiempo', 'code': 'same_minute'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-07-09 09:23:06,360 - INFO - -----------------------Esperando huella-----------------------
+2024-07-09 09:26:30,768 - INFO - -----------------------Esperando huella-----------------------
+2024-07-11 19:43:39,530 - INFO - -----------------------Esperando huella-----------------------
+2024-07-11 19:44:45,968 - INFO - -----------------------Esperando huella-----------------------
+2024-07-11 19:45:25,322 - INFO - -----------------------Esperando huella-----------------------
+2024-07-11 19:45:58,101 - INFO - -----------------------Esperando huella-----------------------

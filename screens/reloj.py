@@ -257,6 +257,10 @@ class Reloj(ctk.CTkFrame):
 
                     self.update_result(result, f"Marcando asistencia: {entry['nombre']}")
 
+                if result == ErrorCode.VALIDATION_ERROR:
+                    self.update_result(result, f"Posible error de doble marcación:\n\n"
+                                               f"Intente nuevamente más tarde: {entry['nombre']}")
+
                 if result == ErrorCode.UNAUTHORIZED:
                     if self.label_auth is None:
                         self.label_auth = ctk.CTkLabel(self, text="Autentificar",
@@ -299,6 +303,9 @@ class Reloj(ctk.CTkFrame):
     def update_result(self, code: ErrorCode, text):
         self.label_result = ctk.CTkLabel(self, text=text)
         self.label_result.pack(padx=10, pady=10)
+        if code == ErrorCode.VALIDATION_ERROR:
+            self.filter_image = ImageOps.colorize(self.open_imagen, "black", "#ffcccb")
+            self.label_result.configure(text=text, text_color="#ffcccb")
 
         if code == ErrorCode.SUCCESS or code == ErrorCode.UNAUTHORIZED or code == ErrorCode.OFFLINE:
             self.filter_image = ImageOps.colorize(self.open_imagen, "black", "#a7f3d0")

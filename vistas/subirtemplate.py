@@ -103,7 +103,7 @@ class SubirTemplate(ctk.CTkScrollableFrame):
         self.entry.pack(padx=20, pady=10)
         self.entry.bind('<KeyRelease>', self.check_autocomplete)
 
-        self.scrollable_frame = ctk.CTkScrollableFrame(self.frame_general_table, width=600, height=self.scroll_height)
+        self.scrollable_frame = ctk.CTkScrollableFrame(self.frame_general_table, width=800, height=self.scroll_height)
         self.scrollable_frame.pack(padx=20, pady=5)
 
         self.create_employee_table()
@@ -112,7 +112,7 @@ class SubirTemplate(ctk.CTkScrollableFrame):
         for widget in self.scrollable_frame.winfo_children():
             widget.destroy()
 
-        headers = ["Nombre", "Acciones"]
+        headers = ["Nombre", "Tiene Huella", "Acciones"]
         for i, header in enumerate(headers):
             label = ctk.CTkLabel(self.scrollable_frame, text=header, font=("Arial", 12, "bold"))
             label.grid(row=0, column=i, padx=10, pady=5)
@@ -121,9 +121,16 @@ class SubirTemplate(ctk.CTkScrollableFrame):
             label = ctk.CTkLabel(self.scrollable_frame, text=empleado['nombre'], width=300)
             label.grid(row=i, column=0, padx=5, pady=5)
 
+            # texto de tiene huella o no si empleado['huella'] es None o el string vacío
+            next_label = "No tiene huella" if not empleado['huella'] else "Tiene huella"
+
+            label = ctk.CTkLabel(self.scrollable_frame, text=next_label, width=300,
+                                 text_color="green" if empleado['huella'] else "red")
+            label.grid(row=i, column=1, padx=5, pady=5)
+
             register_button = ctk.CTkButton(self.scrollable_frame, text="Registrar Huella",
                                             command=lambda e=empleado: self.capture_fingerprint(e))
-            register_button.grid(row=i, column=1, padx=5, pady=5)
+            register_button.grid(row=i, column=2, padx=5, pady=5)
 
     def initialize_finger_template(self):
         self.frame_action = ctk.CTkFrame(self)

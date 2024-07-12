@@ -8,6 +8,7 @@ from utils.storage import Storage
 from utils.config import CONFIG
 from utils.logger import Logger
 
+
 class PlanillaService:
     def __init__(self, auth: Auth):
         self.base_url = CONFIG.API_URL_GENERAL
@@ -52,8 +53,9 @@ class PlanillaService:
                 print('error 400')
                 self.logger.save_log_error(response.json())
                 if response.json()['error_class'] == 'ValidationError':
-                    CTkMessagebox(title="Error", message=f"{response.json()}",
-                                  icon="warning")
+                    # CTkMessagebox(title="Error", message=f"{response.json()}",
+                    #               icon="warning")
+                    return ErrorCode.VALIDATION_ERROR
 
                 return ErrorCode.ERROR
 
