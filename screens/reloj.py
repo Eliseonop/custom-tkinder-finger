@@ -131,7 +131,7 @@ class Reloj(ctk.CTkFrame):
             print(carga)
             if self.planilla_service.huellas:
                 if carga == ErrorCode.UNAUTHORIZED:
-                    self.label_auth = ctk.CTkLabel(self, text="Autentificar",
+                    self.label_auth = ctk.CTkLabel(self, text="Autenticar",
                                                    font=ctk.CTkFont(size=12, weight="bold"),
                                                    fg_color="red")
                     self.label_auth.configure(corner_radius=10)
@@ -263,7 +263,7 @@ class Reloj(ctk.CTkFrame):
 
                 if result == ErrorCode.UNAUTHORIZED:
                     if self.label_auth is None:
-                        self.label_auth = ctk.CTkLabel(self, text="Autentificar",
+                        self.label_auth = ctk.CTkLabel(self, text="Autenticar",
                                                        font=ctk.CTkFont(size=12, weight="bold"),
                                                        fg_color="red")
                         self.label_auth.configure(corner_radius=10)
