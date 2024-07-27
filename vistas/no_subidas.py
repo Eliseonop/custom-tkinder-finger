@@ -2,7 +2,7 @@ import customtkinter as ctk
 import threading
 from servicios.auth import Auth
 from servicios.planilla_service import PlanillaService
-from modelos.error_code import ErrorCode
+from modelos.error_code import CodeResponse
 
 
 class NoSubidas(ctk.CTkFrame):
@@ -106,11 +106,11 @@ class NoSubidas(ctk.CTkFrame):
             try:
                 response = self.planilla_service.post_rectificar(empleado_id, date_time)
 
-                if response == ErrorCode.SUCCESS:
+                if response == CodeResponse.SUCCESS:
                     print(f"Marcación de {marcacion['nombre']} subida correctamente")
                     self.planilla_service.delete_marcacion_offline(empleado_id, date_time)
                     self.display_message(f"Asistencia de {marcacion['nombre']} subida correctamente", color="green")
-                elif response == ErrorCode.ERROR:
+                elif response == CodeResponse.ERROR:
                     self.display_message(f"Error al subir asistencia de {marcacion['nombre']}", color="red")
 
             except Exception as e:

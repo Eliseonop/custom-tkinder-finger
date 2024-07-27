@@ -1,9 +1,12 @@
+from typing import Any
+
 import requests
+from requests import ConnectionError, RequestException
+
 from servicios.auth import Auth
 from CTkMessagebox import CTkMessagebox
-import os
 from servicios.empresa_service import EmpresaService
-from modelos.error_code import ErrorCode
+from modelos.error_code import CodeResponse
 from utils.storage import Storage
 from utils.config import CONFIG
 from utils.logger import Logger
@@ -32,7 +35,8 @@ class PlanillaService:
         else:
             self.new_url = f"https://{empresa['codigo'] + self.base_url}"
 
-    def post_marcacion(self, empleado, hora, save_offline=True) -> ErrorCode:
+    def post_marcacion(self, empleado, hora, save_offline=True) -> tuple[CodeResponse, Any] | tuple[
+        CodeResponse, ConnectionError] | tuple[CodeResponse, RequestException]:
         url = f"{self.new_url}/api/marcaciones"
         token = self.auth.obtener_token()
         headers = {
@@ -44,20 +48,22 @@ class PlanillaService:
         }
         try:
             response = requests.post(url, headers=headers, json=data)
-            print(response.json())
-            print(response.status_code)
+            # print(response.json())
+            # print(response.status_code)
+
             if response.status_code == 201:
                 # self.delete_marcacion_offline(empleado['id'], hora)
-                return ErrorCode.SUCCESS
+                return CodeResponse.SUCCESS, response.json()
             if response.status_code == 400:
-                print('error 400')
+                # print('error 400')
                 self.logger.save_log_error(response.json())
+
                 if response.json()['error_class'] == 'ValidationError':
                     # CTkMessagebox(title="Error", message=f"{response.json()}",
                     #               icon="warning")
-                    return ErrorCode.VALIDATION_ERROR
+                    return CodeResponse.VALIDATION_ERROR, response.json()
 
-                return ErrorCode.ERROR
+                return CodeResponse.ERROR, response.json()
 
             if response.status_code == 401:
                 if save_offline:
@@ -72,8 +78,8 @@ class PlanillaService:
                 # CTkMessagebox(title="Error de autenticación", message="No tiene permisos para marcar.",
                 #               icon="warning")
 
-                return ErrorCode.UNAUTHORIZED
-            return ErrorCode.ERROR
+                return CodeResponse.UNAUTHORIZED, response.json()
+            return CodeResponse.ERROR, response.json()
 
         except requests.ConnectionError as e:
             print(f"Error de conexion: {e}")
@@ -86,12 +92,12 @@ class PlanillaService:
 
                 self.add_to_marcaciones_offline(data_offline)
 
-            return ErrorCode.OFFLINE
+            return CodeResponse.OFFLINE, e
         except requests.exceptions.RequestException as e:
             print(f"Error al guardar la marcación: {e}")
-            return ErrorCode.ERROR
+            return CodeResponse.ERROR, e
 
-    def post_rectificar(self, empleado_id, hora) -> ErrorCode:
+    def post_rectificar(self, empleado_id, hora) -> CodeResponse:
         url = f"{self.new_url}/api/marcaciones/rectificar"
         token = self.auth.token
         headers = {
@@ -105,11 +111,11 @@ class PlanillaService:
             response = requests.post(url, headers=headers, json=data)
             response.raise_for_status()
             print(response.json())
-            return ErrorCode.SUCCESS
+            return CodeResponse.SUCCESS
 
         except requests.exceptions.RequestException as e:
             print(f"Error al guardar la marcación: {e}")
-            return ErrorCode.ERROR
+            return CodeResponse.ERROR
 
     def obtener_empleados(self):
         url = f"{self.new_url}/api/empleados"
@@ -127,7 +133,7 @@ class PlanillaService:
             print(f"Error al obtener los empleados: {e}")
             return False
 
-    def obtener_huellas(self) -> ErrorCode:
+    def obtener_huellas(self) -> CodeResponse:
         self.empresa_service.view_message_if_not_empresa()
 
         url = f"{self.new_url}/api/empleados/ver_huellas"
@@ -141,25 +147,25 @@ class PlanillaService:
             if response.status_code == 200:
                 self.huellas = response.json()
                 self.storage.save('huellas', self.huellas)
-                return ErrorCode.SUCCESS
+                return CodeResponse.SUCCESS
             if response.status_code == 401:
                 self.huellas = self.storage.load('huellas', [])
 
                 # CTkMessagebox(title="Error de autenticación", message="No tiene permisos para ver las huellas.",
                 #               icon="warning")
 
-                return ErrorCode.UNAUTHORIZED
+                return CodeResponse.UNAUTHORIZED
 
             CTkMessagebox(title="Error", message="Error de Servidor.",
                           icon="warning")
             self.huellas = self.storage.load('huellas', [])
 
-            return ErrorCode.ERROR
+            return CodeResponse.ERROR
 
         except requests.ConnectionError as e:
             self.huellas = self.storage.load('huellas', [])
             print(self.huellas)
-            return ErrorCode.OFFLINE
+            return CodeResponse.OFFLINE
         # except requests.exceptions.RequestException as e:
         #     print(f"Error al obtener las huellas: {e}")
         #     self.huellas = self.storage.load('huellas', [])

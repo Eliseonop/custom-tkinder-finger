@@ -8,6 +8,7 @@ from vistas.servidor import Servidor
 from utils.storage import Storage
 from screens.log_win import LogWindow
 from resource_path import RUTA_LOGO
+import os
 
 
 class AutenticarConfig(ctk.CTkFrame):
@@ -47,6 +48,16 @@ class AutenticarConfig(ctk.CTkFrame):
         for widget in self.winfo_children():
             widget.pack_forget()
 
+    def sincronizar_hora(self):
+        try:
+            # self.request_admin_rights()
+            os.system("start ms-settings:dateandtime")
+            # subprocess.run("w32tm /resync", shell=True, check=True)
+            # subprocess.run("w32tm /query /status", shell=True, check=True)
+            # tk.messagebox.showinfo("Éxito", "La hora se ha sincronizado correctamente.")
+        except Exception as e:
+            print(e)
+
     def create_scale(self):
         value_appearance_mode = self.storage.load("appearance_mode", "System")
         value_scaling = self.storage.load("scaling", 1.0)
@@ -71,6 +82,10 @@ class AutenticarConfig(ctk.CTkFrame):
         self.scaling_optionemenu.pack(side="left", padx=0)
         self.button_1 = ctk.CTkButton(frame_scale, text="Abrir Logs", command=self.open_toplevel)
         self.button_1.pack(side="left", padx=20, pady=20)
+
+        self.button_2 = ctk.CTkButton(frame_scale, text="Sincronizar Hora", command=self.sincronizar_hora)
+        self.button_2.configure(fg_color="#15803d")
+        self.button_2.pack(side="left", padx=20, pady=20)
 
     def open_toplevel(self):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():

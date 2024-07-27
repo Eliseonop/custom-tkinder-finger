@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class ErrorCode(Enum):
+class CodeResponse(Enum):
     SUCCESS = 1
     OFFLINE = 2
     ERROR = 3
