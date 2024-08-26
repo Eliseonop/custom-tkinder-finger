@@ -39,6 +39,7 @@ class PlanillaService:
         CodeResponse, ConnectionError] | tuple[CodeResponse, RequestException]:
         url = f"{self.new_url}/api/marcaciones"
         token = self.auth.obtener_token()
+        print(token)
         headers = {
             'Authorization': f'Token {token}'
         }
@@ -48,7 +49,7 @@ class PlanillaService:
         }
         try:
             response = requests.post(url, headers=headers, json=data)
-            # print(response.json())
+            print(response.request.headers)
             # print(response.status_code)
 
             if response.status_code == 201:
@@ -94,6 +95,7 @@ class PlanillaService:
 
             return CodeResponse.OFFLINE, e
         except requests.exceptions.RequestException as e:
+            print(requests.get(url).json())
             print(f"Error al guardar la marcación: {e}")
             return CodeResponse.ERROR, e
 

@@ -24,7 +24,7 @@ class Auth:
             data = response.json()
             self.token = data['token']
             self.user = data['user']
-
+            print(self.token)
             self.storage.save('token', self.token)
             return True
         else:

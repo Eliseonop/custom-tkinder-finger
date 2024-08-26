@@ -185,11 +185,55 @@ class SubirTemplate(ctk.CTkScrollableFrame):
         self.show_table()
 
     def thread_capture_fingerprint(self):
-        templates, imgs = self.acquire_fingerprint_data()
-        if templates and imgs:
-            self.selected_template = b64encode(bytes(templates[0])).decode()
+        regTemp, imgs = self.capturar_huella_fucion(3)
+        if regTemp and imgs:
+            self.selected_template = b64encode(bytes(regTemp)).decode()
             self.write_img(imgs[0])
             self.initialize_finger_template()
+
+    def capturar_huella_fucion(self, veces):
+        print('inciando captura')
+        colors = ['green', 'red', 'blue']
+        self.label_count = ctk.CTkLabel(self.frame_title_finger, text=f'',
+                                        font=("Arial", 17, "bold"))
+        self.progress_count = ctk.CTkProgressBar(self.frame_title_finger, width=200, height=5, mode="determinate")
+        try:
+            templates, imgs = [], []
+
+            templates = []
+            for i in range(veces):
+
+                # self.progress_count.configure(mode="determinate")
+                # self.progress_count.start()
+                # solo numeros de 0 a 1
+
+                print('captura', i)
+                while True:
+                    capture = self.zkfp2.AcquireFingerprint()
+                    self.progress_count.set((i + 1) / veces)
+                    self.progress_count.pack(pady=2)
+                    self.label_count.configure(text=f'Huella {i + 1} de {veces}', text_color="green")
+                    self.label_count.pack(pady=10, padx=10)
+                    if capture:
+                        print('Huella dactilar capturada')
+                        tmp, img = capture
+                        # templates.append(capture[0])
+                        templates.append(tmp)
+                        imgs.append(capture[1])
+                        # self.whileValue = False
+
+                        if (i+1) == 3:
+                            self.label_count.configure(text="Huella capturada", text_color="green")
+                            self.progress_count.stop()
+                            self.progress_count.pack_forget()
+                            # self.label_count.pack_forget()
+                            break
+
+                        break
+            regTemp, regTempLen = self.zkfp2.DBMerge(*templates)
+            return regTemp, imgs
+        except Exception as e:
+            print(f"Error al capturar huella: {e}")
 
     def acquire_fingerprint_data(self):
         templates, imgs = [], []

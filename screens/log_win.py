@@ -27,7 +27,7 @@ class LogWindow(ctk.CTkToplevel):
 
                 for index, log in enumerate(logs_data):
                     log_parts = log.split(' - ')
-                    print(log_parts)
+                    # print(log_parts)
                     if len(log_parts) == 3:  # Asegurar que el log tenga el formato esperado
                         hora_label = ctk.CTkLabel(self.frame, text=log_parts[0])
                         hora_label.grid(row=index, column=0, sticky="w", padx=10)

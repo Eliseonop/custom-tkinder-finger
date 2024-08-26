@@ -265,7 +265,7 @@ class Reloj(ctk.CTkFrame):
                     self.update_result(result, f"Marcando... ", newMarcacion.entrada)
 
                 if result == CodeResponse.VALIDATION_ERROR:
-                    self.update_result(result, f"Intente nuevamente más tarde:\n {entry['nombre']}", None)
+                    self.update_result(result, f"Intente nuevamente más tarde:\n {entry['nombre']}", False)
 
                 if result == CodeResponse.UNAUTHORIZED:
                     if self.label_auth is None:
@@ -274,18 +274,18 @@ class Reloj(ctk.CTkFrame):
                                                        fg_color="red")
                         self.label_auth.configure(corner_radius=10)
                         self.label_auth.place(relx=0.0, rely=1.0, anchor="sw", x=20, y=-20)
-                    self.update_result(result, f"Marcando...\n {entry['nombre']}", None)
+                    self.update_result(result, f"Marcando...\n {entry['nombre']}", False)
 
                 elif result == CodeResponse.ERROR:
                     # self.logger.save_log_error(f"Error con el servidor: {entry['nombre']} ")
                     self.update_result(result,
-                                       f"Error con el Servidor: {entry['nombre']} ")
+                                       f"Error con el Servidor: {entry['nombre']} ", False)
 
                 break
 
         if not match_found:
             self.logger.save_log_error("Huella no identificada")
-            self.update_result(CodeResponse.ERROR, "Empleado no identificado")
+            self.update_result(CodeResponse.ERROR, "Empleado no identificado", False)
         imagen_ctk = ctk.CTkImage(light_image=self.filter_image, dark_image=self.filter_image, size=(200, 250))
         self.image_label = ctk.CTkLabel(self, image=imagen_ctk, text="", width=200, height=200, corner_radius=15)
         self.image_label.pack(padx=10, pady=10)
@@ -312,12 +312,12 @@ class Reloj(ctk.CTkFrame):
         self.label_result.pack(padx=10, pady=10)
         if code == CodeResponse.VALIDATION_ERROR:
             self.filter_image = ImageOps.colorize(self.open_imagen, "black", "#ffcccb")
-            self.label_result.configure(text=text, text_color="#ffcccb")
+            self.label_result.configure(text=text, text_color="#eab308")
 
         if code == CodeResponse.SUCCESS or code == CodeResponse.UNAUTHORIZED or code == CodeResponse.OFFLINE:
             # self.result_text =
             self.filter_image = ImageOps.colorize(self.open_imagen, "black", "#a7f3d0")
-            self.label_result.configure(text=text, text_color="#a7f3d0")
+            self.label_result.configure(text=text, text_color="#50c18d")
             text = "Entrada" if marca else "Salida"
 
             if marca is None and code == CodeResponse.OFFLINE:
@@ -330,12 +330,12 @@ class Reloj(ctk.CTkFrame):
                 if marca:
                     self.label_mark = ctk.CTkLabel(self, text=f"{text}",
                                                    font=ctk.CTkFont(size=22, weight="bold", ),
-                                                   fg_color="green")
+                                                   fg_color="#7c3aed")
                     # self.label_mark.configure(corner_radius=10)
                 else:
                     self.label_mark = ctk.CTkLabel(self, text=f"{text}",
                                                    font=ctk.CTkFont(size=22, weight="bold"),
-                                                   fg_color="red")
+                                                   fg_color="#818cf8")
                 self.label_mark.configure(corner_radius=10)
                 self.label_mark.pack(padx=10, pady=10, )
         elif code == CodeResponse.ERROR:
