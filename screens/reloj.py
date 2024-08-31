@@ -251,7 +251,7 @@ class Reloj(ctk.CTkFrame):
             # self.progress_bar.step(20)
             match = self.device.zkfp2.DBMatch(tmp, temp)
             print(f"Match: {match}")
-            if match > 70:
+            if match > 80:
                 match_found = True
                 self.view_progress()
                 print(f"Empleado identificado: {entry}")
@@ -259,14 +259,25 @@ class Reloj(ctk.CTkFrame):
                 self.stop_progress()
                 print(f"Resultado: {result}")
                 if result == CodeResponse.SUCCESS or result == CodeResponse.OFFLINE:
-                    # self.logger.save_log_info(f"Asistencia marco con exito: {entry['nombre']} - {hora}")
                     newMarcacion = Marcacion(data)
+                    text_marca = "Entrada" if newMarcacion.entrada else "Salida"
+                    color_marca = "#6ee7b7" if data["entrada"] else "#7dd3fc"
+                    self.update_result(
+                        label1=f"Marcando... ",
+                        c_label1='#334155',
+                        c_huella=color_marca,
+                        c_mark=color_marca,
+                        t_mark=text_marca,
+                    )
 
-                    self.update_result(result, f"Marcando... ", newMarcacion.entrada)
-
+                    # self.update_result(result, f"Marcando... ", newMarcacion.entrada)
                 if result == CodeResponse.VALIDATION_ERROR:
-                    self.update_result(result, f"Intente nuevamente más tarde:\n {entry['nombre']}", False)
-
+                    # self.update_result(result, f"Intente nuevamente más tarde:\n {entry['nombre']}", False)
+                    self.update_result(
+                        label1=f"Intente nuevamente más tarde: \n {entry['nombre']}",
+                        c_label1='#fca5a5',
+                        c_huella='#fca5a5',
+                    )
                 if result == CodeResponse.UNAUTHORIZED:
                     if self.label_auth is None:
                         self.label_auth = ctk.CTkLabel(self, text="Autenticar",
@@ -274,18 +285,33 @@ class Reloj(ctk.CTkFrame):
                                                        fg_color="red")
                         self.label_auth.configure(corner_radius=10)
                         self.label_auth.place(relx=0.0, rely=1.0, anchor="sw", x=20, y=-20)
-                    self.update_result(result, f"Marcando...\n {entry['nombre']}", False)
+                    # self.update_result(result, f"Marcando...\n {entry['nombre']}", False)
+                    self.update_result(
+                        label1=f"Error de autenticación",
+                        c_label1='#fca5a5',
+                        c_huella='#fca5a5',
+                    )
 
                 elif result == CodeResponse.ERROR:
                     # self.logger.save_log_error(f"Error con el servidor: {entry['nombre']} ")
-                    self.update_result(result,
-                                       f"Error con el Servidor: {entry['nombre']} ", False)
+                    # self.update_result(result,
+                    #                    f"Error con el Servidor: {entry['nombre']} ", False)
+                    self.update_result(
+                        label1=f"Error con el servidor: {entry['nombre']}",
+                        c_label1='#fca5a5',
+                        c_huella='#fca5a5',
+                    )
 
                 break
 
         if not match_found:
             self.logger.save_log_error("Huella no identificada")
-            self.update_result(CodeResponse.ERROR, "Empleado no identificado", False)
+            # self.update_result(CodeResponse.ERROR, "Empleado no identificado", False)
+            self.update_result(
+                label1=f"Empleado no identificado",
+                c_label1='#fca5a5',
+                c_huella='#fca5a5',
+            )
         imagen_ctk = ctk.CTkImage(light_image=self.filter_image, dark_image=self.filter_image, size=(200, 250))
         self.image_label = ctk.CTkLabel(self, image=imagen_ctk, text="", width=200, height=200, corner_radius=15)
         self.image_label.pack(padx=10, pady=10)
@@ -300,51 +326,15 @@ class Reloj(ctk.CTkFrame):
         self.progress_bar.stop()
         self.progress_bar.pack_forget()
 
-    # def make_marcaje(self):
-    #     try:
-    #         self.planilla_service.marcar_asistencia()
-    #     except Exception as e:
-    #         print(f"Error al marcar asistencia: {e}")
+    def update_result(self, label1: str, c_label1: str, c_huella: str, t_mark: str = None, c_mark: str = 'black'):
 
-    def update_result(self, code: CodeResponse, text, marca: bool):
-
-        self.label_result = ctk.CTkLabel(self, text=text)
+        self.label_result = ctk.CTkLabel(self, text=label1, text_color=c_label1)
         self.label_result.pack(padx=10, pady=10)
-        if code == CodeResponse.VALIDATION_ERROR:
-            self.filter_image = ImageOps.colorize(self.open_imagen, "black", "#ffcccb")
-            self.label_result.configure(text=text, text_color="#eab308")
+        self.filter_image = ImageOps.colorize(self.open_imagen, "black", c_huella)
 
-        if code == CodeResponse.SUCCESS or code == CodeResponse.UNAUTHORIZED or code == CodeResponse.OFFLINE:
-            # self.result_text =
-            self.filter_image = ImageOps.colorize(self.open_imagen, "black", "#a7f3d0")
-            self.label_result.configure(text=text, text_color="#50c18d")
-            text = "Entrada" if marca else "Salida"
-
-            if marca is None and code == CodeResponse.OFFLINE:
-                self.label_mark = ctk.CTkLabel(self, text=f"Offline",
-                                               font=ctk.CTkFont(size=22, weight="bold", ),
-                                               fg_color="#7c3aed")
-                self.label_mark.configure(corner_radius=10)
-                self.label_mark.pack(padx=10, pady=10, )
-            if code == CodeResponse.SUCCESS:
-                if marca:
-                    self.label_mark = ctk.CTkLabel(self, text=f"{text}",
-                                                   font=ctk.CTkFont(size=22, weight="bold", ),
-                                                   fg_color="#7c3aed")
-                    # self.label_mark.configure(corner_radius=10)
-                else:
-                    self.label_mark = ctk.CTkLabel(self, text=f"{text}",
-                                                   font=ctk.CTkFont(size=22, weight="bold"),
-                                                   fg_color="#818cf8")
-                self.label_mark.configure(corner_radius=10)
-                self.label_mark.pack(padx=10, pady=10, )
-        elif code == CodeResponse.ERROR:
-            self.filter_image = ImageOps.colorize(self.open_imagen, "black", "#fecaca")
-            self.label_result.configure(text=text, text_color="#fecaca")
-        # elif code == ErrorCode.OFFLINE:
-        #     self.filter_image = ImageOps.colorize(self.open_imagen, "black", "#a7f3d0")
-        #     self.label_result.configure(text=text, text_color="#a7f3d0")
-
-    # def toggle_buttons(self, state):
-    #     for button in self.buttons:
-    #         button.configure(state=("normal" if state else "disabled"))
+        if t_mark is not None:
+            self.label_mark = ctk.CTkLabel(self, text=t_mark,
+                                           font=ctk.CTkFont(size=22, weight="bold", ),
+                                           fg_color=c_mark, text_color='black')
+            self.label_mark.configure(corner_radius=6)
+            self.label_mark.pack(padx=15, pady=15, )

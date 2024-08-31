@@ -7,11 +7,15 @@ from base64 import b64encode, b64decode
 from io import BytesIO
 from PIL import Image
 from pyzkfp import ZKFP2
+from tkinter import messagebox
+import time
 
 
 class SubirTemplate(ctk.CTkScrollableFrame):
     def __init__(self, master, auth: Auth):
         super().__init__(master)
+        self.dis_message = None
+        self.thread_fing = None
         self.pack(fill="both", expand=True)
         # self.title_window()
         self.initialize_ui_elements()
@@ -25,12 +29,12 @@ class SubirTemplate(ctk.CTkScrollableFrame):
         self.whileValue = False
         self.frame_action_cancel = None
         self.frame_action = None
-        self.scroll_height = 550
+        self.scroll_height = 450
         self.load_empleados()
 
     def destroy(self):
         self.whileValue = False
-        # self.zkfp2.Terminate()
+
         print("Destruyendo vista de subir template")
         super().destroy()
 
@@ -39,14 +43,6 @@ class SubirTemplate(ctk.CTkScrollableFrame):
         self.progress_bar.pack(side="top", pady=2, fill="x")
         self.title_label = ctk.CTkLabel(self, text="Registro de Huella", font=("Arial", 20, "bold"))
         self.title_label.pack(pady=2, padx=2, side="top")
-        # self.label_buscar = ctk.CTkLabel(self, text="Buscar Empleado")
-        # self.label_buscar.pack(padx=20, pady=2)
-        #
-        # self.var = StringVar()
-        # self.entry = ctk.CTkEntry(self, textvariable=self.var)
-        # self.entry.pack(padx=20, pady=2)
-        # self.entry.bind('<KeyRelease>', self.check_autocomplete)
-
         self.image_label = None
         self.fingerprint_message_label = None
         self.frame_title_finger = None
@@ -83,14 +79,14 @@ class SubirTemplate(ctk.CTkScrollableFrame):
             # self.initialize_finger_template()
         else:
             print('No se han podido cargar las huellas')
-            self.display_message("No se han podido cargar los empleados")
+            self.display_message("No se han podido cargar los empleados", "red")
 
         self.progress_bar.pack_forget()
 
     def initialize_main_template(self):
 
         self.frame_general_table = ctk.CTkFrame(self, fg_color="transparent")
-        self.frame_general_table.pack(pady=20)
+        self.frame_general_table.pack(pady=10)
 
         self.frame_search = ctk.CTkFrame(self.frame_general_table)
         self.frame_search.pack(pady=2, padx=20)
@@ -103,7 +99,7 @@ class SubirTemplate(ctk.CTkScrollableFrame):
         self.entry.pack(padx=20, pady=10)
         self.entry.bind('<KeyRelease>', self.check_autocomplete)
 
-        self.scrollable_frame = ctk.CTkScrollableFrame(self.frame_general_table, width=800, height=self.scroll_height)
+        self.scrollable_frame = ctk.CTkScrollableFrame(self.frame_general_table, width=860, height=self.scroll_height)
         self.scrollable_frame.pack(padx=20, pady=5)
 
         self.create_employee_table()
@@ -136,17 +132,27 @@ class SubirTemplate(ctk.CTkScrollableFrame):
         self.frame_action = ctk.CTkFrame(self)
         self.frame_action.pack(pady=20)
 
-        self.capture_button = ctk.CTkButton(self.frame_action, text="Reintentar", command=self.capture_fingerprint)
-        self.capture_button.pack(padx=20, pady=20, side="left")
+        self.capture_button = ctk.CTkButton(self.frame_action, text="Reintentar", command=self.capture_fingerprint,
+                                            fg_color="#57534e"
+                                            )
+        self.capture_button.pack(padx=20, pady=10, side="left")
 
         self.submit_button = ctk.CTkButton(self.frame_action, text="Registrar", command=self.submit_form,
+
                                            fg_color="indigo")
-        self.submit_button.pack(padx=20, pady=20, side="left")
+
+        self.submit_button.pack(padx=20, pady=10, side="left")
 
     def capture_fingerprint(self, empleado=None):
+        self.clear_display_message()
         print("Capturando huella")
         print(self.selected_empleado)
         print(threading.active_count())
+        self.whileValue = False
+
+        if self.thread_fing and self.thread_fing.is_alive():
+            self.whileValue = False
+            self.thread_fing.join()
 
         # cancelar el hilo de captura de huella
         if self.frame_general_table:
@@ -170,6 +176,11 @@ class SubirTemplate(ctk.CTkScrollableFrame):
     def cancelar(self):
         self.selected_empleado = None
         self.selected_template = None
+        # self.zkfp2.DBFree()
+        if self.thread_fing and self.thread_fing.is_alive():
+            self.whileValue = False
+            self.thread_fing.join()
+
         self.whileValue = False
         if self.image_label:
             self.image_label.pack_forget()
@@ -185,49 +196,50 @@ class SubirTemplate(ctk.CTkScrollableFrame):
         self.show_table()
 
     def thread_capture_fingerprint(self):
-        regTemp, imgs = self.capturar_huella_fucion(3)
-        if regTemp and imgs:
-            self.selected_template = b64encode(bytes(regTemp)).decode()
-            self.write_img(imgs[0])
-            self.initialize_finger_template()
+        try:
+            self.whileValue = True
+            regTemp, imgs = self.capturar_huella_fucion(3)
+            if regTemp and imgs:
+                self.selected_template = b64encode(bytes(regTemp)).decode()
+                self.write_img(imgs[0])
+                self.initialize_finger_template()
+                if self.fingerprint_message_label:
+                    self.fingerprint_message_label.pack_forget()
+        except Exception as e:
+            print(f"Error al capturar huella: {e}")
 
     def capturar_huella_fucion(self, veces):
         print('inciando captura')
-        colors = ['green', 'red', 'blue']
+
         self.label_count = ctk.CTkLabel(self.frame_title_finger, text=f'',
                                         font=("Arial", 17, "bold"))
         self.progress_count = ctk.CTkProgressBar(self.frame_title_finger, width=200, height=5, mode="determinate")
         try:
             templates, imgs = [], []
 
-            templates = []
             for i in range(veces):
 
-                # self.progress_count.configure(mode="determinate")
-                # self.progress_count.start()
-                # solo numeros de 0 a 1
-
                 print('captura', i)
-                while True:
+                self.progress_count.set((i + 1) / veces)
+                self.progress_count.pack(pady=2)
+                self.label_count.configure(text=f'Esperando Huella {i + 1} de {veces}', text_color="green")
+                self.label_count.pack(pady=10, padx=10)
+
+                while self.whileValue:
                     capture = self.zkfp2.AcquireFingerprint()
-                    self.progress_count.set((i + 1) / veces)
-                    self.progress_count.pack(pady=2)
-                    self.label_count.configure(text=f'Huella {i + 1} de {veces}', text_color="green")
-                    self.label_count.pack(pady=10, padx=10)
+
                     if capture:
                         print('Huella dactilar capturada')
                         tmp, img = capture
-                        # templates.append(capture[0])
+
                         templates.append(tmp)
                         imgs.append(capture[1])
-                        # self.whileValue = False
 
-                        if (i+1) == 3:
+                        if (i + 1) == 3:
+                            print('Huella capturada')
                             self.label_count.configure(text="Huella capturada", text_color="green")
                             self.progress_count.stop()
                             self.progress_count.pack_forget()
-                            # self.label_count.pack_forget()
-                            break
 
                         break
             regTemp, regTempLen = self.zkfp2.DBMerge(*templates)
@@ -255,16 +267,16 @@ class SubirTemplate(ctk.CTkScrollableFrame):
     def show_fingerprint_message(self):
 
         self.frame_title_finger = ctk.CTkFrame(self)
-        self.frame_title_finger.pack(pady=20)
+        self.frame_title_finger.pack(pady=10)
         title = f"Registrar huella de {self.selected_empleado['nombre']}"
         self.label_title_finger = ctk.CTkLabel(self.frame_title_finger, text=title, font=("Arial", 17, "bold"))
         self.label_title_finger.pack(pady=10, padx=10)
 
         self.frame_action_cancel = ctk.CTkFrame(self)
-        self.frame_action_cancel.pack(pady=10)
+        self.frame_action_cancel.pack(pady=5, padx=5)
         self.cancel_button = ctk.CTkButton(self.frame_action_cancel, text="Cancelar", command=self.cancelar,
                                            fg_color="red")
-        self.cancel_button.pack(padx=20, pady=20, side="left")
+        self.cancel_button.pack(padx=20, pady=10, side="left")
 
         if self.image_label:
             self.image_label.pack_forget()
@@ -294,9 +306,13 @@ class SubirTemplate(ctk.CTkScrollableFrame):
             self.image_label = ctk.CTkLabel(self, image=ctk_image, text="", width=200, height=200)
         self.image_label.pack(padx=10, pady=10)
 
-    def display_message(self, message, pady=20):
-        label = ctk.CTkLabel(self, text=message)
-        label.pack(padx=20, pady=pady)
+    def display_message(self, message, t_color: str):
+        self.dis_message = ctk.CTkLabel(self, text=message, text_color=t_color)
+        self.dis_message.pack(padx=20, pady=10, )
+
+    def clear_display_message(self):
+        if self.dis_message:
+            self.dis_message.pack_forget()
 
     def update_submit_button_state(self):
         if self.selected_empleado and self.selected_template:
@@ -309,14 +325,6 @@ class SubirTemplate(ctk.CTkScrollableFrame):
             print("No se ha seleccionado ningún empleado")
             return
 
-        # datos = {
-        #     "empleado": self.selected_empleado['id'],
-        #     "empleado_name": self.selected_empleado['nombre'],
-        #     "huella": self.selected_template
-        # }
-
-        # self.upload_finger(self.selected_empleado['id'], self.selected_template)
-
         threading.Thread(target=self.upload_finger, args=(self.selected_empleado['id'], self.selected_template)).start()
 
     def upload_finger(self, empleado, huella):
@@ -326,30 +334,30 @@ class SubirTemplate(ctk.CTkScrollableFrame):
         self.progress_bar.pack(side="top", pady=2)
 
         try:
-            response = self.planilla_service.upload_huella(empleado, huella)
+            response, json = self.planilla_service.upload_huella(empleado, huella)
 
             if response:
                 self.progress_bar.stop()
                 self.progress_bar.pack_forget()
-                self.display_message("Huella subida correctamente")
+                self.display_message("Huella subida correctamente", "green")
                 self.cancelar()
 
             else:
-                # self.display_message("Error al subir la huella")
-
+                # print('ojo')
+                self.display_message(json, 'red')
+                messagebox.showerror("Error", json)
+                # ctk.CTkToplevel(title="Error", message=json, icon="warning")
                 self.progress_bar.stop()
                 self.progress_bar.pack_forget()
 
         except Exception as e:
             print(f"Error al subir la huella: {e}")
+            messagebox.showerror("Error", 'Error del Servidor')
+
             self.progress_bar.stop()
             self.progress_bar.pack_forget()
-            # self.display_message("Error al subir la huella")
+            self.display_message("Error al subir la huella", "red")
             # self.cancelar()
-
-    # def eliminar_huella(self, empleado_id):
-    #     print(f"Eliminando huella del empleado con ID: {empleado_id}")
-    #     threading.Thread(target=self.planilla_service.delete_finger, args=(empleado_id,)).start()
 
     def check_autocomplete(self, event):
         typed = self.var.get().lower()

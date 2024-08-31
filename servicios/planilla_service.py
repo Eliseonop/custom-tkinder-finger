@@ -60,8 +60,6 @@ class PlanillaService:
                 self.logger.save_log_error(response.json())
 
                 if response.json()['error_class'] == 'ValidationError':
-                    # CTkMessagebox(title="Error", message=f"{response.json()}",
-                    #               icon="warning")
                     return CodeResponse.VALIDATION_ERROR, response.json()
 
                 return CodeResponse.ERROR, response.json()
@@ -75,9 +73,6 @@ class PlanillaService:
                     }
 
                     self.add_to_marcaciones_offline(data_offline)
-
-                # CTkMessagebox(title="Error de autenticación", message="No tiene permisos para marcar.",
-                #               icon="warning")
 
                 return CodeResponse.UNAUTHORIZED, response.json()
             return CodeResponse.ERROR, response.json()
@@ -145,7 +140,7 @@ class PlanillaService:
         }
         try:
             response = requests.get(url, headers=headers)
-            # response.raise_for_status()
+
             if response.status_code == 200:
                 self.huellas = response.json()
                 self.storage.save('huellas', self.huellas)
@@ -153,13 +148,10 @@ class PlanillaService:
             if response.status_code == 401:
                 self.huellas = self.storage.load('huellas', [])
 
-                # CTkMessagebox(title="Error de autenticación", message="No tiene permisos para ver las huellas.",
-                #               icon="warning")
-
                 return CodeResponse.UNAUTHORIZED
 
-            CTkMessagebox(title="Error", message="Error de Servidor.",
-                          icon="warning")
+            # CTkMessagebox(title="Error", message="Error de Servidor.",
+            #               icon="warning")
             self.huellas = self.storage.load('huellas', [])
 
             return CodeResponse.ERROR
@@ -168,10 +160,6 @@ class PlanillaService:
             self.huellas = self.storage.load('huellas', [])
             print(self.huellas)
             return CodeResponse.OFFLINE
-        # except requests.exceptions.RequestException as e:
-        #     print(f"Error al obtener las huellas: {e}")
-        #     self.huellas = self.storage.load('huellas', [])
-        #     return ErrorCode.ERROR
 
     def upload_huella(self, empleado_id, huella):
         url = f"{self.new_url}/api/empleados/{empleado_id}/guardar_huella"
@@ -186,13 +174,12 @@ class PlanillaService:
             response = requests.put(url, headers=headers, json=data)
             print(response.json())
             response.raise_for_status()
-            return True
+            return True, response.json()
         except requests.exceptions.RequestException as e:
             details = e.response.json()
-            CTkMessagebox(title="Error al subir la huella!", message=details['detail']['message'],
-                          icon="warning", option_1="Cancelar")
+
             print(f"Error al subir la huella: {e}")
-            return False
+            return False, details
 
     def add_to_marcaciones_offline(self, data):
         self.marcaciones_offline.append(data)

@@ -474,3 +474,135 @@
 2024-08-26 17:36:54,733 - INFO - -----------------------Esperando huella-----------------------
 2024-08-26 17:38:53,020 - INFO - -----------------------Esperando huella-----------------------
 2024-08-26 17:38:55,210 - ERROR - Huella no identificada
+2024-08-26 17:39:58,539 - INFO - -----------------------Esperando huella-----------------------
+2024-08-26 17:41:21,734 - INFO - -----------------------Esperando huella-----------------------
+2024-08-26 19:54:54,183 - INFO - -----------------------Esperando huella-----------------------
+2024-08-26 19:56:05,539 - INFO - -----------------------Esperando huella-----------------------
+2024-08-26 19:58:04,257 - INFO - -----------------------Esperando huella-----------------------
+2024-08-26 20:00:47,425 - INFO - -----------------------Esperando huella-----------------------
+2024-08-26 20:06:09,685 - INFO - -----------------------Esperando huella-----------------------
+2024-08-26 20:08:17,762 - INFO - -----------------------Esperando huella-----------------------
+2024-08-26 20:08:33,667 - INFO - -----------------------Esperando huella-----------------------
+2024-08-26 20:10:15,769 - INFO - -----------------------Esperando huella-----------------------
+2024-08-26 20:10:52,211 - INFO - -----------------------Esperando huella-----------------------
+2024-08-26 20:12:39,991 - INFO - -----------------------Esperando huella-----------------------
+2024-08-26 20:13:41,545 - INFO - -----------------------Esperando huella-----------------------
+2024-08-26 20:16:41,694 - INFO - -----------------------Esperando huella-----------------------
+2024-08-26 20:18:31,140 - INFO - -----------------------Esperando huella-----------------------
+2024-08-26 20:19:20,628 - INFO - -----------------------Esperando huella-----------------------
+2024-08-26 20:20:59,382 - INFO - -----------------------Esperando huella-----------------------
+2024-08-26 20:23:42,350 - INFO - -----------------------Esperando huella-----------------------
+2024-08-26 20:24:21,950 - INFO - -----------------------Esperando huella-----------------------
+2024-08-26 20:26:48,260 - INFO - -----------------------Esperando huella-----------------------
+2024-08-26 20:29:03,408 - INFO - -----------------------Esperando huella-----------------------
+2024-08-26 20:30:23,926 - INFO - -----------------------Esperando huella-----------------------
+2024-08-26 20:32:25,319 - INFO - -----------------------Esperando huella-----------------------
+2024-08-26 20:33:09,449 - INFO - -----------------------Esperando huella-----------------------
+2024-08-26 20:33:11,964 - ERROR - {'detail': {'contrato': [{'message': ' No se encontro un contrato activo para el empleado', 'code': 'not_contrato'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-08-27 09:15:52,756 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 09:16:02,895 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 09:16:05,532 - ERROR - Huella no identificada
+2024-08-27 09:16:09,971 - ERROR - {'detail': {'contrato': [{'message': ' No se encontro un contrato activo para el empleado', 'code': 'not_contrato'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-08-27 09:19:34,268 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 09:19:36,721 - ERROR - {'detail': {'contrato': [{'message': ' No se encontro un contrato activo para el empleado', 'code': 'not_contrato'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-08-27 09:20:03,921 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 09:20:50,768 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 09:20:57,548 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 09:20:59,849 - ERROR - {'detail': {'contrato': [{'message': ' No se encontro un contrato activo para el empleado', 'code': 'not_contrato'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-08-27 09:26:20,879 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 09:29:53,148 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 09:30:59,190 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 09:31:02,026 - ERROR - Huella no identificada
+2024-08-27 09:31:12,745 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 09:31:26,850 - ERROR - {'detail': {'hora': [{'message': 'No puede haber dos marcaciones al mismo tiempo', 'code': 'same_minute'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-08-27 09:31:44,443 - ERROR - {'detail': {'hora': [{'message': 'No puede haber dos marcaciones al mismo tiempo', 'code': 'same_minute'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-08-27 09:31:52,942 - ERROR - {'detail': {'hora': [{'message': 'No puede haber dos marcaciones al mismo tiempo', 'code': 'same_minute'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-08-27 09:31:59,687 - ERROR - {'detail': {'hora': [{'message': 'No puede haber dos marcaciones al mismo tiempo', 'code': 'same_minute'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-08-27 09:32:47,263 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 09:32:52,700 - ERROR - {'detail': {'hora': [{'message': 'No puede haber dos marcaciones al mismo tiempo', 'code': 'same_minute'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-08-27 09:32:58,526 - ERROR - {'detail': {'contrato': [{'message': ' No se encontro un contrato activo para el empleado', 'code': 'not_contrato'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-08-27 10:03:27,378 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 10:05:08,007 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 10:05:44,359 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 10:06:37,599 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 10:09:12,148 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 10:09:23,587 - ERROR - {'detail': {'contrato': [{'message': ' No se encontro un contrato activo para el empleado', 'code': 'not_contrato'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-08-27 10:10:18,546 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 10:10:47,507 - ERROR - {'detail': {'hora': [{'message': 'No puede haber dos marcaciones al mismo tiempo', 'code': 'same_minute'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-08-27 10:11:06,172 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 10:11:08,919 - ERROR - {'detail': {'contrato': [{'message': ' No se encontro un contrato activo para el empleado', 'code': 'not_contrato'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-08-27 10:51:43,176 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 10:52:36,055 - ERROR - {'detail': {'contrato': [{'message': ' No se encontro un contrato activo para el empleado', 'code': 'not_contrato'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-08-27 10:53:11,882 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 10:53:15,970 - ERROR - Huella no identificada
+2024-08-27 10:53:23,749 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 10:53:26,353 - ERROR - {'detail': {'contrato': [{'message': ' No se encontro un contrato activo para el empleado', 'code': 'not_contrato'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-08-27 10:54:26,812 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 10:54:32,597 - ERROR - {'detail': {'contrato': [{'message': ' No se encontro un contrato activo para el empleado', 'code': 'not_contrato'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-08-27 11:04:50,732 - ERROR - {'detail': {'contrato': [{'message': ' No se encontro un contrato activo para el empleado', 'code': 'not_contrato'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-08-27 11:05:50,741 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 11:10:25,148 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 11:26:20,909 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 11:26:26,200 - ERROR - Huella no identificada
+2024-08-27 11:27:17,649 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 11:27:19,808 - ERROR - Huella no identificada
+2024-08-27 11:27:49,017 - ERROR - Huella no identificada
+2024-08-27 11:31:09,596 - ERROR - Huella no identificada
+2024-08-27 11:49:19,993 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 12:12:16,603 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 12:14:00,477 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 12:14:29,268 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 12:14:55,616 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 12:23:47,845 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 12:23:50,257 - ERROR - {'detail': {'contrato': [{'message': ' No se encontro un contrato activo para el empleado', 'code': 'not_contrato'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-08-27 13:25:35,637 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 13:27:24,316 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 13:32:49,147 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 13:34:17,282 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 13:34:47,906 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 13:36:22,896 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 13:37:05,731 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 13:37:19,252 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 13:41:26,215 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 13:42:19,777 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 13:43:08,874 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 13:45:33,653 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 13:47:55,036 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 13:49:49,729 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 13:51:24,675 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 13:52:08,563 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 13:52:24,314 - ERROR - Huella no identificada
+2024-08-27 13:52:31,526 - ERROR - Huella no identificada
+2024-08-27 14:02:23,828 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 14:02:29,882 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 14:02:37,887 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 14:04:01,609 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 14:05:51,698 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 14:08:44,422 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 14:08:50,971 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 14:09:16,646 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 14:09:20,379 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 14:14:56,152 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 14:15:11,498 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 14:15:30,116 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 14:16:06,146 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 14:16:34,179 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 14:16:36,817 - ERROR - {'detail': {'hora': [{'message': 'No puede haber dos marcaciones al mismo tiempo', 'code': 'same_minute'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-08-27 14:19:02,314 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 14:19:10,677 - INFO - -----------------------Esperando huella-----------------------
+2024-08-27 14:19:12,959 - ERROR - Huella no identificada
+2024-08-29 08:20:27,645 - INFO - -----------------------Esperando huella-----------------------
+2024-08-29 08:21:32,827 - INFO - -----------------------Esperando huella-----------------------
+2024-08-29 08:25:50,823 - INFO - -----------------------Esperando huella-----------------------
+2024-08-29 08:25:57,258 - INFO - -----------------------Esperando huella-----------------------
+2024-08-29 08:31:28,847 - INFO - -----------------------Esperando huella-----------------------
+2024-08-29 08:31:31,486 - ERROR - {'detail': {'contrato': [{'message': ' No se encontro un contrato activo para el empleado', 'code': 'not_contrato'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-08-29 10:32:34,721 - INFO - -----------------------Esperando huella-----------------------
+2024-08-29 12:00:02,524 - INFO - -----------------------Esperando huella-----------------------
+2024-08-29 20:47:30,626 - INFO - -----------------------Esperando huella-----------------------
+2024-08-29 20:48:16,743 - INFO - -----------------------Esperando huella-----------------------
+2024-08-29 20:48:38,268 - INFO - -----------------------Esperando huella-----------------------
+2024-08-29 20:48:56,792 - INFO - -----------------------Esperando huella-----------------------
+2024-08-29 20:49:57,876 - INFO - -----------------------Esperando huella-----------------------
+2024-08-29 20:50:05,004 - ERROR - {'detail': {'contrato': [{'message': ' No se encontro un contrato activo para el empleado', 'code': 'not_contrato'}]}, 'error_class': 'ValidationError', 'status_code': 400}
+2024-08-29 20:50:09,764 - INFO - -----------------------Esperando huella-----------------------

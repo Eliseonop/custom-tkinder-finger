@@ -116,7 +116,7 @@ class NoSubidas(ctk.CTkFrame):
             except Exception as e:
                 self.display_message(f"Error al subir asistencia de {marcacion['nombre']}", color="red")
 
-        self.display_message("Todas las asistencias se subieron correctamente", color="#a3e635")
+        self.display_message("Todas las asistencias se subieron correctamente", color="#059669")
 
         self.stop_progress()
         # self.load_marcaciones_offline()
